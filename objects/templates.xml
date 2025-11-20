@@ -1,0 +1,36 @@
+<GuiXml>
+    <Controls>
+        <Label name="Lib3DObjects_Text" virtual="true" space="WORLD">
+            <Dimensions x="100" y="100" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER"/>
+        </Label>
+    </Controls>
+    <Controls>
+        <Texture name="Lib3DObjects_Texture" virtual="true" space="WORLD">
+            <Dimensions x="100" y="100" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER"/>
+        </Texture>
+    </Controls>
+
+    <Controls>
+        <Control name="Lib3DObjects_Marker" virtual="true" space="WORLD">
+            <Dimensions x="100" y="100" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER"/>
+            <Controls>
+                <Texture name="$(parent)_Background" inheritAlpha="true" inheritScale="true">
+                    <Dimensions x="100" y="100" />
+                    <Anchor point="CENTER" relativeTo="$(parent)" relativePoint="CENTER"/>
+                </Texture>
+                <Texture name="$(parent)_Highlight" inheritAlpha="true" inheritScale="true" hidden="true">
+                    <Dimensions x="100" y="100" />
+                    <Anchor point="CENTER" relativeTo="$(parent)" relativePoint="CENTER"/>
+                </Texture>
+                <Label name="$(parent)_Text" inheritAlpha="true" inheritScale="true" horizontalAlignment="TEXT_ALIGN_CENTER" verticalAlignment="TEXT_ALIGN_CENTER" font="$(MEDIUM_FONT)|$(KB_40)|thick-outline" text="">
+                    <Dimensions x="100" y="100" />
+                    <Anchor point="CENTER" relativeTo="$(parent)" relativePoint="CENTER"/>
+                </Label>
+
+            </Controls>
+        </Control>
+    </Controls>
+</GuiXml>

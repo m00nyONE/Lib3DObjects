@@ -1,0 +1,44 @@
+; SPDX-FileCopyrightText: 2025 m00nyONE
+; SPDX-License-Identifier: Artistic-2.0
+
+## Title: Lib3DObjects
+## Description: a library rendering controls in 3D Space
+## Version: dev
+## Author: |c76c3f4@m00nyONE|r
+## APIVersion: 101047 101048
+## AddOnVersion: 99999999
+## IsLibrary: true
+
+; This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates.
+; The Elder Scrolls® and related logos are registered trademarks or trademarks of ZeniMax Media Inc. in the United States and/or other countries.
+; All rights reserved
+;
+; You can read the full terms at https://account.elderscrollsonline.com/add-on-terms
+
+# templates
+objects/templates.xml
+animations/animations.xml
+
+# Core Library
+Lib3DObjects.lua
+core/ObjectPoolManager.lua
+core/AnimationPoolManager.lua
+core/CameraHelper.lua
+
+# Animations
+animations/animations.lua
+
+# Objects
+objects/BaseObject.lua
+objects/Marker.lua
+objects/GroundMarker.lua
+objects/GroundMarkerMechanic.lua
+objects/FloatingMarker.lua
+objects/FloatingMarkerMechanic.lua
+objects/UnitMarker.lua
+objects/UnitMarkerMechanic.lua
+
+# Examples
+#_examples/groundMarker.lua
+#_examples/reactiveGroundMarker.lua
+#_examples/unitMarker.lua

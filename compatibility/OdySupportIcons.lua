@@ -1,0 +1,1 @@
+-- this is a stub for OSI's mechanic and ground icons
