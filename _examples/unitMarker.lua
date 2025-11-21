@@ -28,6 +28,7 @@ function lib.examples.createUnitMarkerArray(count)
         marker:SetColor(math.random(), math.random(), math.random(), 1)
         marker:SetPositionOffsetX(offsetX)
         marker:SetPositionOffsetZ(offsetZ)
+        marker:SetAutoRotationMode(AUTOROTATE_PLAYER)
         table.insert(markers, marker)
     end
 
