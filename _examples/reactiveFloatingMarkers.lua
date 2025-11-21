@@ -14,17 +14,17 @@ local function onMouseLeaveCallback(self, distanceToPlayer, distanceToCamera)
     self.TextControl:SetHidden(true)
 end
 local function updateDistanceText(self, distanceToPlayer, distanceToCamera)
-    self:SetText(string.format("%.1fm\n%.1fm", distanceToPlayer, distanceToCamera))
+    self:SetText(string.format("%.1fm", distanceToPlayer / 100))
 end
 local onMouseOver = lib.animations.CreateMouseOverTrigger(100, onMouseEnterCallback, onMouseLeaveCallback)
 
 function lib.examples.createSingleReactiveFloatingMarker()
     local _, pX, pY, pZ = GetUnitRawWorldPosition("player")
-    local marker = lib.FloatingMarker:New(nil, pX, pY, pZ, 1000)
+    local marker = lib.FloatingMarker:New(nil, pX, pY, pZ, 0)
     marker:SetDrawDistanceMeters(200)
     marker:SetColor(0, 0, 1, 1)
-    marker:AddCallback(onMouseOver())
-    marker.TextControl:SetHidden(true)
+    marker:AddCallback(updateDistanceText)
+    marker:AddCallback(marker.MoveToCursor)
 end
 
 function lib.examples.createReactiveFloatingMarkerArray(count)
