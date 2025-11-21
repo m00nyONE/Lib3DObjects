@@ -331,10 +331,8 @@ function BaseObject:RotateToCamera()
 end
 
 function BaseObject:RotateToPlayerHeading()
-    local heading = GetPlayerCameraHeading()
-    --self.rotation.pitch = 0
+    local _, _, heading = GetMapPlayerPosition("player")
     self.rotation.yaw = heading + ZO_PI
-    --self.rotation.roll = 0
 end
 
 function BaseObject:SetAutoRotationMode(mode)
