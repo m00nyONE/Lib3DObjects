@@ -25,7 +25,7 @@
                     <Dimensions x="100" y="100" />
                     <Anchor point="CENTER" relativeTo="$(parent)" relativePoint="CENTER"/>
                 </Texture>
-                <Label name="$(parent)_Text" inheritAlpha="true" inheritScale="true" horizontalAlignment="TEXT_ALIGN_CENTER" verticalAlignment="TEXT_ALIGN_CENTER" font="$(MEDIUM_FONT)|$(KB_40)|thick-outline" text="">
+                <Label name="$(parent)_Text" inheritAlpha="true" inheritScale="true" horizontalAlignment="CENTER" verticalAlignment="CENTER" font="$(MEDIUM_FONT)|$(KB_40)|thick-outline" text="">
                     <Dimensions x="100" y="100" />
                     <Anchor point="CENTER" relativeTo="$(parent)" relativePoint="CENTER"/>
                 </Label>

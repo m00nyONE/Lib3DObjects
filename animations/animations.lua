@@ -194,40 +194,19 @@ function animations.CreateContinuesFlashAnimation(conditionFunc, offDuration, on
 end
 
 -- callback creation functions
-
--- creates a trigger that fires a callback when the object is within a certain radius of the player. This trigger resets when the player moves out of the radius.
-function animations.CreateEnterRadiusTrigger(radius, callback)
+function animations.CreateRadiusTrigger(activationRadius, enterCallback, leaveCallback)
     return function()
         local fired = false
         local function callbackFunc(self, distanceToPlayer, distanceToCamera)
-            if fired then
-                if distanceToPlayer > radius then
-                    fired = false
+            if distanceToPlayer > activationRadius then
+                if fired and leaveCallback then
+                    leaveCallback(self, distanceToPlayer, distanceToCamera)
                 end
-                return
-            end
-            if distanceToPlayer <= radius then
-                callback(self, distanceToPlayer, distanceToCamera)
-                fired = true
-            end
-        end
-
-        return callbackFunc
-    end
-end
--- creates a trigger that fires a callback when the object is outside a certain radius of the player. This trigger resets when the player moves within the radius.
-function animations.CreateExitRadiusTrigger(radius, callback)
-    return function()
-        local fired = false
-        local function callbackFunc(self, distanceToPlayer, distanceToCamera)
-            if fired then
-                if distanceToPlayer <= radius then
-                    fired = false
+                fired = false
+            elseif not fired and distanceToPlayer <= activationRadius then
+                if enterCallback then
+                    enterCallback(self, distanceToPlayer, distanceToCamera)
                 end
-                return
-            end
-            if distanceToPlayer > radius then
-                callback(self, distanceToPlayer, distanceToCamera)
                 fired = true
             end
         end
@@ -236,7 +215,7 @@ function animations.CreateExitRadiusTrigger(radius, callback)
     end
 end
 
-function animations.CreateMouseOverTrigger(activationRadius, callback)
+function animations.CreateMouseOverTrigger(activationRadius, enterCallback, leaveCallback)
     return function()
         local fired = false
         local function callbackFunc(self, distanceToPlayer, distanceToCamera)
@@ -270,14 +249,15 @@ function animations.CreateMouseOverTrigger(activationRadius, callback)
             -- Calculate the allowed angle based on activationRadius and distance
             local allowedAngle = zo_atan2(activationRadius, dist)
 
-            if fired then
-                if angle > allowedAngle then
-                    fired = false
+            if angle > allowedAngle then
+                if fired and leaveCallback then
+                    leaveCallback(self, distanceToPlayer, distanceToCamera)
                 end
-                return
-            end
-            if angle <= allowedAngle then
-                callback(self, distanceToPlayer, distanceToCamera)
+                fired = false
+            elseif not fired and angle <= allowedAngle then
+                if enterCallback then
+                    enterCallback(self, distanceToPlayer, distanceToCamera)
+                end
                 fired = true
             end
         end

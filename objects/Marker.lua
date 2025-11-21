@@ -16,9 +16,6 @@ function Marker:Initialize(texture)
     self.BackgroundControl = self.Control:GetNamedChild("_Background")
     self.TextControl = self.Control:GetNamedChild("_Text")
     self.HighlightControl = self.Control:GetNamedChild("_Highlight")
-
-    self:SetTexture(texture)
-
     self.HighlightControl:SetTexture("esoui/art/actionBar/abilityHighlightAnimation.dds")
     self.HighlightControl:SetTextureCoords(0, 1, 0, 1)
 
@@ -30,6 +27,8 @@ function Marker:Initialize(texture)
     self.HighlightAnimation:SetImageData(64, 1)
     self.HighlightAnimation:SetFramerate(30)
     self.HighlightAnimation:GetTimeline():SetPlaybackType(ANIMATION_PLAYBACK_LOOP, LOOP_INDEFINITELY)
+
+    self:SetTexture(texture)
 
     self:RotateToCamera()
 

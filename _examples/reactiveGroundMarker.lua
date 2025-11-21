@@ -11,23 +11,17 @@ local enterRadiusCallback = function(self, distanceToPlayer, distanceToCamera)
     self:AddCallback(bounceAnimation())
     self:AddCallback(scaleToOneAnimation())
 end
-local exitRadiusCallback = function(self, distanceToPlayer, distanceToCamera)
+local leaveRadiusCallback = function(self, distanceToPlayer, distanceToCamera)
     self:AddCallback(scaleToTwoAnimation())
 end
-local enterTrigger = lib.animations.CreateEnterRadiusTrigger(500, enterRadiusCallback)
-local exitTrigger = lib.animations.CreateExitRadiusTrigger(501, exitRadiusCallback)
-local onMouseOver = lib.animations.CreateMouseOverTrigger(50, function(self, distanceToPlayer, distanceToCamera)
-    self:SetColor(1, 1, 0)
-end)
+local radiusTrigger = lib.animations.CreateRadiusTrigger(500, enterRadiusCallback, leaveRadiusCallback)
 
 --- creates a single reactive ground marker at player's position
 function lib.examples.createSingleReactiveGroundMarker()
     local _, x, y, z = GetUnitRawWorldPosition("player")
     local reactiveMarker = lib.GroundMarker:New("/art/fx/texture/arcanist_support03_wardring.dds", x, y, z)
-    reactiveMarker:AddCallback(enterTrigger())
-    reactiveMarker:AddCallback(exitTrigger())
+    reactiveMarker:AddCallback(radiusTrigger())
     reactiveMarker:AddCallback(continuousRotation())
-    reactiveMarker:AddCallback(onMouseOver())
 
     reactiveMarker:SetAlpha(1)
     reactiveMarker:SetColor(0, 1, 0)
@@ -49,10 +43,8 @@ function lib.examples.createReactiveGroundMarkerArray(count)
         local offsetZ = radius * math.sin(angle)
 
         local reactiveMarker = lib.GroundMarker:New(nil, centerX + offsetX, centerY + offsetY, centerZ + offsetZ)
-        reactiveMarker:AddCallback(enterTrigger())
-        reactiveMarker:AddCallback(exitTrigger())
+        reactiveMarker:AddCallback(radiusTrigger())
         reactiveMarker:AddCallback(continuousRotation())
-        reactiveMarker:AddCallback(onMouseOver())
 
         reactiveMarker:SetTexture("/art/fx/texture/arcanist_support03_wardring.dds")
         reactiveMarker:SetAlpha(1)
@@ -85,10 +77,8 @@ function lib.examples.createReactiveGroundMarkerConcentricArray(ringCount, marke
             local offsetZ = radius * math.sin(angle)
 
             local reactiveMarker = lib.GroundMarker:New(nil, centerX + offsetX, centerY + offsetY, centerZ + offsetZ)
-            reactiveMarker:AddCallback(enterTrigger())
-            reactiveMarker:AddCallback(exitTrigger())
+            reactiveMarker:AddCallback(radiusTrigger())
             reactiveMarker:AddCallback(continuousRotation())
-            reactiveMarker:AddCallback(onMouseOver())
 
             reactiveMarker:SetTexture("/art/fx/texture/arcanist_support03_wardring.dds")
             reactiveMarker:SetAlpha(1)
