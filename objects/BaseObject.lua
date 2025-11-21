@@ -346,6 +346,23 @@ function BaseObject:MoveToUnit(unitTag)
     self.position.z = unitZ
 end
 
+function BaseObject:MoveToCursor()
+    -- this code is inspired by M0RMarkers
+    local camX, camY, camZ = lib.GetCameraWorldPosition()
+    local fwX, fwY, fwZ = GetCameraForward(SPACE_WORLD)
+    local yaw = zo_atan2(fwX, fwZ) - ZO_PI
+    local pitch = zo_atan2(fwY, zo_sqrt(fwX * fwX + fwZ * fwZ))
+
+    if pitch > zo_rad(-2) then return end -- just not too far off the screen
+
+    local _, _, y, _ = GetUnitRawWorldPosition('player') --feet position
+    local r = (camY-y)/(zo_tan(pitch))
+    local x = r*zo_sin(yaw) + camX
+    local z = r*zo_cos(yaw) + camZ
+
+    self:SetPosition(x, y, z)
+end
+
 --- add a callback function
 --- @param callback function the callback function to add
 --- @return boolean true if the callback was added, false if it was already present
