@@ -16,16 +16,19 @@ local exitRadiusCallback = function(self, distanceToPlayer, distanceToCamera)
 end
 local enterTrigger = lib.animations.CreateEnterRadiusTrigger(500, enterRadiusCallback)
 local exitTrigger = lib.animations.CreateExitRadiusTrigger(501, exitRadiusCallback)
+local onMouseOver = lib.animations.CreateMouseOverTrigger(50, function(self, distanceToPlayer, distanceToCamera)
+    self:SetColor(1, 1, 0)
+end)
 
 --- creates a single reactive ground marker at player's position
 function lib.examples.createSingleReactiveGroundMarker()
     local _, x, y, z = GetUnitRawWorldPosition("player")
-    local reactiveMarker = lib.GroundMarker:New(nil, x, y, z)
+    local reactiveMarker = lib.GroundMarker:New("/art/fx/texture/arcanist_support03_wardring.dds", x, y, z)
     reactiveMarker:AddCallback(enterTrigger())
     reactiveMarker:AddCallback(exitTrigger())
     reactiveMarker:AddCallback(continuousRotation())
+    reactiveMarker:AddCallback(onMouseOver())
 
-    reactiveMarker:SetTexture("/art/fx/texture/arcanist_support03_wardring.dds")
     reactiveMarker:SetAlpha(1)
     reactiveMarker:SetColor(0, 1, 0)
 end
@@ -49,6 +52,7 @@ function lib.examples.createReactiveGroundMarkerArray(count)
         reactiveMarker:AddCallback(enterTrigger())
         reactiveMarker:AddCallback(exitTrigger())
         reactiveMarker:AddCallback(continuousRotation())
+        reactiveMarker:AddCallback(onMouseOver())
 
         reactiveMarker:SetTexture("/art/fx/texture/arcanist_support03_wardring.dds")
         reactiveMarker:SetAlpha(1)
@@ -84,6 +88,7 @@ function lib.examples.createReactiveGroundMarkerConcentricArray(ringCount, marke
             reactiveMarker:AddCallback(enterTrigger())
             reactiveMarker:AddCallback(exitTrigger())
             reactiveMarker:AddCallback(continuousRotation())
+            reactiveMarker:AddCallback(onMouseOver())
 
             reactiveMarker:SetTexture("/art/fx/texture/arcanist_support03_wardring.dds")
             reactiveMarker:SetAlpha(1)

@@ -235,3 +235,53 @@ function animations.CreateExitRadiusTrigger(radius, callback)
         return callbackFunc
     end
 end
+
+function animations.CreateMouseOverTrigger(activationRadius, callback)
+    return function()
+        local fired = false
+        local function callbackFunc(self, distanceToPlayer, distanceToCamera)
+            local cX, cY, cZ = lib.GetCameraWorldPosition()
+            local fX, fY, fZ = GetCameraForward(SPACE_WORLD)
+
+            local mX = self.position.x + self.position.offsetX + self.position.animationOffsetX
+            local mY = self.position.y + self.position.offsetY + self.position.animationOffsetY
+            local mZ = self.position.z + self.position.offsetZ + self.position.animationOffsetZ
+
+            -- Vector from camera to object
+            local toObjX = mX - cX
+            local toObjY = mY - cY
+            local toObjZ = mZ - cZ
+
+            -- Distance to object
+            local dist = zo_distance3D(0, 0, 0, toObjX, toObjY, toObjZ)
+            if dist == 0 then return end
+
+            -- Normalize vectors
+            local toObjNormX, toObjNormY, toObjNormZ = toObjX / dist, toObjY / dist, toObjZ / dist
+            local fLen = zo_sqrt(fX * fX + fY * fY + fZ * fZ)
+            local fNormX, fNormY, fNormZ = fX / fLen, fY / fLen, fZ / fLen
+
+            -- Dot product gives cos(angle)
+            local dot = toObjNormX * fNormX + toObjNormY * fNormY + toObjNormZ * fNormZ
+            -- Clamp dot to [-1, 1] to avoid math domain errors
+            dot = zo_max(-1, zo_min(1, dot))
+            local angle = math.acos(dot)
+
+            -- Calculate the allowed angle based on activationRadius and distance
+            local allowedAngle = zo_atan2(activationRadius, dist)
+
+            if fired then
+                if angle > allowedAngle then
+                    fired = false
+                end
+                return
+            end
+            if angle <= allowedAngle then
+                callback(self, distanceToPlayer, distanceToCamera)
+                fired = true
+            end
+        end
+
+        return callbackFunc
+    end
+end
