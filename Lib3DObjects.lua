@@ -34,6 +34,8 @@ local function initialize()
     --local _ = lib.examples.createReactiveGroundMarkerArray(50)
     --local _ = lib.examples.createReactiveGroundMarkerConcentricArray(6, 6, 200, 200)
     --local _ = lib.examples.createUnitMarkerArray(20)
+    --local _ = lib.examples.createSingleReactiveFloatingMarker()
+    --local _ = lib.examples.createReactiveFloatingMarkerArray(20)
 
 end
 
