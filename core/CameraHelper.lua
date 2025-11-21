@@ -16,6 +16,8 @@ function lib.core.createCameraHelperControl()
     lib.core.createCameraHelperControl = nil
 end
 
+--- Returns the world position of the current camera.
+--- @return number, number, number x,y,z - The world position of the camera.
 function lib.GetCameraWorldPosition()
     Set3DRenderSpaceToCurrentCamera(lib.core.cameraControlName)
     return GuiRender3DPositionToWorldPosition(lib.core.cameraControl:Get3DRenderSpaceOrigin())
