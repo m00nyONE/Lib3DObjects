@@ -6,8 +6,19 @@ local BaseObject = lib.BaseObject
 local Line = BaseObject:Subclass()
 lib.Line = Line
 
+--- 3D Line Object
+--- @param texture string Path to texture file
+--- @param x1 number X coordinate of start point
+--- @param y1 number Y coordinate of start point
+--- @param z1 number Z coordinate of start point
+--- @param x2 number X coordinate of end point (optional, defaults to x1)
+--- @param y2 number Y coordinate of end point (optional, defaults to y1)
+--- @param z2 number Z coordinate of end point (optional, defaults to z1)
 function Line:Initialize(texture, x1, y1, z1, x2, y2, z2)
     BaseObject.Initialize(self, "Lib3DObjects_Line", self)
+    x2 = x2 or x1
+    y2 = y2 or y1
+    z2 = z2 or z1
     local centerX = (x1 + x2) / 2
     local centerY = (y1 + y2) / 2
     local centerZ = (z1 + z2) / 2
@@ -73,6 +84,19 @@ end
 function Line:GetEndPoint()
     return self.endX, self.endY, self.endZ
 end
+-- calculates a new endpoint
+function Line:SetEndpointFromDirectionVector(length, pitch, yaw)
+    local dx = length * zo_cos(pitch) * zo_cos(yaw)
+    local dy = length * zo_sin(pitch)
+    local dz = length * zo_cos(pitch) * zo_sin(yaw)
+    local endX = self.startX + dx
+    local endY = self.startY + dy
+    local endZ = self.startZ + dz
+    self.endX = endX
+    self.endY = endY
+    self.endZ = endZ
+end
+
 function Line:_ResizeToEndpoints()
     self.Control:SetHeight(self:GetLineLength())
 end
