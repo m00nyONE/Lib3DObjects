@@ -334,6 +334,33 @@ function BaseObject:GetLivetimeMS()
     return GetGameTimeMilliseconds() - self.creationTimestamp
 end
 
+function BaseObject:RotateAroundPoint(x, y, z, pitchOffset, yawOffset, rollOffset)
+    local pX, pY, pZ = self:GetFullPosition()
+
+    -- Translate to origin (relative to pivot)
+    local dx, dy, dz = pX - x, pY - y, pZ - z
+
+    -- Apply yaw rotation (around Y axis)
+    local cosY = math.cos(yawOffset)
+    local sinY = math.sin(yawOffset)
+    local rx = cosY * dx - sinY * dz
+    local rz = sinY * dx + cosY * dz
+    local ry = dy -- No change for Y in yaw
+
+    -- Translate back
+    local newX = x + rx
+    local newY = y + ry
+    local newZ = z + rz
+
+    -- Update base position (ignoring offsets for simplicity)
+    self:SetPositionX(newX - self.position.offsetX - self.position.animationOffsetX)
+    self:SetPositionY(newY - self.position.offsetY - self.position.animationOffsetY)
+    self:SetPositionZ(newZ - self.position.offsetZ - self.position.animationOffsetZ)
+
+    -- Apply rotation to orientation
+    self:Rotate(pitchOffset, -yawOffset, rollOffset)
+end
+
 function BaseObject:RotateToCamera()
     local fX, fY, fZ = GetCameraForward(SPACE_WORLD)
     self.rotation.pitch = zo_atan2(fY, zo_sqrt(fX * fX + fZ * fZ))

@@ -43,6 +43,13 @@ function lib.examples.create3DSphereMarker(radius, count)
             local r, g, b = discoLightColor(GetGameTimeMilliseconds() + (100 * i))
             object:SetColor(r, g, b, 1)
         end)
+        local _, pX, pY, pZ = GetUnitRawWorldPosition("player")
+        marker:AddCallback(function(object, _, _)
+
+            -- rotate around the player by using the time as angle and by using object:RotateAroundPoint(x, y, z, pitch, yaw, roll)
+            local currentTime = GetGameTimeMilliseconds()
+            object:RotateAroundPoint(pX + 1000, pY, pZ, 0, 0.01, 0)
+        end)
         table.insert(markers, marker)
     end
 
