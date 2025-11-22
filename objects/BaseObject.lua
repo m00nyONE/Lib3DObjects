@@ -10,6 +10,7 @@ lib.BaseObject = BaseObject
 local AUTOROTATE_NONE = lib.AUTOROTATE_NONE
 local AUTOROTATE_CAMERA = lib.AUTOROTATE_CAMERA
 local AUTOROTATE_PLAYER = lib.AUTOROTATE_PLAYER
+local AUTOROTATE_GROUND = lib.AUTOROTATE_GROUND
 
 local EM = GetEventManager()
 
@@ -133,6 +134,8 @@ function BaseObject:Update()
         self:RotateToCamera()
     elseif self.autoRotationMode == AUTOROTATE_PLAYER then
         self:RotateToPlayerHeading()
+    elseif self.autoRotationMode == AUTOROTATE_GROUND then
+        self:RotateToGroundNormal()
     end
 
     self:_UpdatePosition()
@@ -333,6 +336,13 @@ end
 function BaseObject:RotateToPlayerHeading()
     local _, _, heading = GetMapPlayerPosition("player")
     self.rotation.yaw = heading + ZO_PI
+end
+
+function BaseObject:RotateToGroundNormal()
+    local cP, cY, cR = self:GetRotation()
+    self.rotation.pitch = -ZO_PI/2
+    self.rotation.yaw = cY
+    self.rotation.roll = 0
 end
 
 function BaseObject:SetAutoRotationMode(mode)
