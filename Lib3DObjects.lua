@@ -38,6 +38,9 @@ local function initialize()
     --local _ = lib.examples.createSingleReactiveFloatingMarker()
     --local _ = lib.examples.createReactiveFloatingMarkerArray(20)
     --local _ = lib.examples.createSingleLine()
+    --local _ = lib.examples.createLineSphere(10)
+    --local _ = lib.examples.createKubeOutOfLines(200)
+    --local _ = lib.examples.createPointingArrowLine()
 
 end
 
