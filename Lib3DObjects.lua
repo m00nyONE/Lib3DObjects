@@ -36,6 +36,7 @@ local function initialize()
     --local _ = lib.examples.createUnitMarkerArray(20)
     --local _ = lib.examples.createSingleReactiveFloatingMarker()
     --local _ = lib.examples.createReactiveFloatingMarkerArray(20)
+    --local _ = lib.examples.createSingleLine()
 
 end
 

@@ -30,6 +30,7 @@ animations/animations.lua
 
 # Objects
 objects/BaseObject.lua
+objects/Line.lua
 objects/Marker.lua
 objects/GroundMarker.lua
 objects/GroundMarkerMechanic.lua
@@ -43,3 +44,4 @@ _examples/groundMarker.lua
 _examples/reactiveGroundMarker.lua
 _examples/reactiveFloatingMarkers.lua
 _examples/unitMarker.lua
+_examples/lines.lua
