@@ -8,23 +8,21 @@ lib.Line = Line
 
 function Line:Initialize(texture, x1, y1, z1, x2, y2, z2)
     BaseObject.Initialize(self, "Lib3DObjects_Line", self)
+    local centerX = (x1 + x2) / 2
+    local centerY = (y1 + y2) / 2
+    local centerZ = (z1 + z2) / 2
+    self:SetPosition(centerX, centerY, centerZ)
+
     self:SetStartPoint(x1, y1, z1)
     self:SetEndPoint(x2, y2, z2)
-    self:ResizeToEndpoints()
-    self:SetPositionToCenter()
 
     self:SetTexture(texture)
 
-    --self:RotateToCamera()
-    --self:SetRotation(-ZO_PI/2, 0, 0)
-
     self:SetDrawDistanceMeters(75)
     self:SetAlpha(0.75)
-    self:SetLineWidth(20)
+    self:SetLineWidth(5)
 
-    self:AddCallback(function(object, distanceToPlayer, distanceToCamera)
-        object:_drawLine()
-    end)
+    self:AddCallback(self._ResizeToEndpoints)
 end
 
 function Line:Destroy()
@@ -54,6 +52,10 @@ end
 function Line:GetLineWidth()
     return self.lineWidth
 end
+function Line:GetLineLength()
+    local dist = zo_distance3D(self.startX or 0, self.startY or 0, self.startZ or 0, self.endX or 0, self.endY or 0, self.endZ or 0)
+    return dist
+end
 
 function Line:SetStartPoint(x, y, z)
     self.startX = x or 0
@@ -71,40 +73,36 @@ end
 function Line:GetEndPoint()
     return self.endX, self.endY, self.endZ
 end
-function Line:SetPositionToCenter()
-    local centerX = (self.startX + self.endX) / 2
-    local centerY = (self.startY + self.endY) / 2
-    local centerZ = (self.startZ + self.endZ) / 2
-    self:SetPosition(centerX, centerY, centerZ)
-end
-function Line:ResizeToEndpoints()
-    local dist = zo_distance3D(self.startX or 0, self.startY or 0, self.startZ or 0, self.endX or 0, self.endY or 0, self.endZ or 0)
-    self.Control:SetHeight(dist / 100) -- Scale factor to convert world units to control width
+function Line:_ResizeToEndpoints()
+    self.Control:SetHeight(self:GetLineLength())
 end
 
-function Line:_drawLine()
-    -- set position to center between endpoints
-    local centerX = (self.startX + self.endX) / 2
-    local centerY = (self.startY + self.endY) / 2
-    local centerZ = (self.startZ + self.endZ) / 2
-    self:SetPosition(centerX, centerY, centerZ)
+function Line:_UpdatePosition()
+    -- set position to midpoint between start and end
+    self.position.x = (self.startX + self.endX) / 2
+    self.position.y = (self.startY + self.endY) / 2
+    self.position.z = (self.startZ + self.endZ) / 2
 
-    -- resize to match distance between endpoints
+    local sx, sy ,sz = GuiRender3DPositionToWorldPosition(0,0,0)
+    local x = ((self.position.x + self.position.offsetX + self.position.animationOffsetX) - sx) / 100
+    local y = ((self.position.y + self.position.offsetY + self.position.animationOffsetY) - sy) / 100
+    local z = ((self.position.z + self.position.offsetZ + self.position.animationOffsetZ) - sz) / 100
+    self.Control:SetTransformOffset(x, y, z)
+end
+
+function Line:_UpdateRotation()
+    -- calculate rotation to face from start to end point
     local dx = self.endX - self.startX
     local dy = self.endY - self.startY
     local dz = self.endZ - self.startZ
-    local dist = zo_sqrt(dx * dx + dy * dy + dz * dz)
-    self.Control:SetHeight(dist) -- Scale factor to convert world units to control width
-
-    --local angle = math.atan(dy/dx)
-    --self.Control:SetTransformRotationZ(-angle)
-
-    -- TODO: fix rotation
-
-    ---- set rotation to match direction between endpoints
-    ---- the top should face the same direction as the vector from p1 to p2
-    self.rotation.yaw = zo_atan2(dz, dx)
-    self.rotation.pitch = zo_atan2(dy, zo_sqrt(dx * dx + dz * dz))
+    local anglePitch = zo_atan2(dy, zo_sqrt(dx * dx + dz * dz))
+    local angleYaw = zo_atan2(dz, dx)
+    self.rotation.pitch = -anglePitch + ZO_PI / 2
+    self.rotation.yaw = -angleYaw + ZO_PI / 2
     self.rotation.roll = 0
 
+    local pitch = self.rotation.pitch + self.rotation.animationOffsetPitch
+    local yaw = self.rotation.yaw + self.rotation.animationOffsetYaw
+    local roll = self.rotation.roll + self.rotation.animationOffsetRoll
+    self.Control:SetTransformRotation(pitch, yaw, roll)
 end
