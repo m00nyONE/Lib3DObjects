@@ -200,6 +200,11 @@ function BaseObject:GetFullPosition()
            self.position.y + self.position.offsetY + self.position.animationOffsetY,
            self.position.z + self.position.offsetZ + self.position.animationOffsetZ
 end
+function BaseObject:GetFullPositionOffsets()
+    return self.position.offsetX + self.position.animationOffsetX,
+           self.position.offsetY + self.position.animationOffsetY,
+           self.position.offsetZ + self.position.animationOffsetZ
+end
 function BaseObject:SetPosition(x, y, z)
     self.position.x = x
     self.position.y = y
