@@ -150,3 +150,22 @@ function lib.examples.createKubeOutOfLines(size)
 
     return lines
 end
+
+function lib.examples.createPointingArrowLine()
+    local _, x, y, z = GetUnitRawWorldPosition("player")
+    local line = lib.Line:New("Lib3DObjects/textures/arrow.dds", x, y, z)
+    line:SetLineWidth(200)
+    line:SetColor(1, 1, 0)
+    line:SetAlpha(0.5)
+
+    line:AddCallback(function(self, distanceToPlayer, distanceToCamera)
+        local _, px, py, pz = GetUnitRawWorldPosition("player")
+        self:SetStartPoint(px, py, pz)
+
+        local pitch = 0
+        local yaw = -GetPlayerCameraHeading() - ZO_PI / 2
+        self:SetEndpointFromDirectionVector(3000, pitch, yaw)
+    end)
+
+    return line
+end
