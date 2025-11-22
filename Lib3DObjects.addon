@@ -45,3 +45,4 @@ _examples/reactiveGroundMarker.lua
 _examples/reactiveFloatingMarkers.lua
 _examples/unitMarker.lua
 _examples/lines.lua
+_examples/sphere.lua

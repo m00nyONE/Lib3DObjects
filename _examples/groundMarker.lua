@@ -29,6 +29,7 @@ function lib.examples.createGroundMarkerArray(count)
 
         local marker = lib.GroundMarker:New(nil, centerX + offsetX, centerY + offsetY, centerZ + offsetZ)
         marker:SetColor(math.random(), math.random(), math.random(), 1)
+        --marker:EnableVisualNormalVector()
         table.insert(markers, marker)
     end
 
