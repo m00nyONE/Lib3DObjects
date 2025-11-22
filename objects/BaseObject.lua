@@ -312,11 +312,9 @@ function BaseObject:RotateRoll(offsetRoll)
     self.rotation.roll = (self.rotation.roll or 0) + offsetRoll
 end
 
+--- @return number normalX, number normalY, number normalZ
 function BaseObject:GetNormalVector()
-    local fX = -math.sin(self.rotation.yaw) * math.cos(self.rotation.pitch)
-    local fY = math.sin(self.rotation.pitch)
-    local fZ = -math.cos(self.rotation.yaw) * math.cos(self.rotation.pitch)
-    return fX, fY, fZ
+    return self.Control:GetNormal()
 end
 
 function BaseObject:GetCreationTimestamp()
