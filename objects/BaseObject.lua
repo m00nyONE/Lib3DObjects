@@ -402,3 +402,24 @@ end
 function BaseObject:RemoveAllCallback()
     ZO_ClearTable(self.callbacks)
 end
+
+function BaseObject:EnableVisualNormalVector()
+    if self.visualNormalVector then return end
+    local length = 100
+    local line = lib.Line:New("Lib3DObjects/textures/arrow.dds", self.position.x, self.position.y, self.position.z)
+    line:SetColor(1, 1, 1, 1)
+    line:SetLineWidth(100)
+    line:AddCallback(function(object, distanceToPlayer, distanceToCamera)
+        local fX, fY, fZ = self:GetNormalVector()
+        local posX, posY, posZ = self:GetActualPosition()
+        local endX, endY, endZ = posX + fX * length, posY + fY * length, posZ + fZ * length
+        object:SetStartPoint(posX, posY, posZ)
+        object:SetEndPoint(endX, endY, endZ)
+    end)
+
+    self.visualNormalVector = line
+end
+function BaseObject:DisableVisualNormalVector()
+    if not self.visualNormalVector then return end
+    self.visualNormalVector:Destroy()
+end
