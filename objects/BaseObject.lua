@@ -416,7 +416,7 @@ function BaseObject:EnableVisualNormalVector()
     line:SetLineWidth(100)
     line:AddCallback(function(object, distanceToPlayer, distanceToCamera)
         local fX, fY, fZ = self:GetNormalVector()
-        local posX, posY, posZ = self:GetActualPosition()
+        local posX, posY, posZ = self:GetFullPosition()
         local endX, endY, endZ = posX + fX * length, posY + fY * length, posZ + fZ * length
         object:SetStartPoint(posX, posY, posZ)
         object:SetEndPoint(endX, endY, endZ)
