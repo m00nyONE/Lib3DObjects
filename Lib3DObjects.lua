@@ -47,6 +47,6 @@ EM:RegisterForEvent(lib_name, EVENT_ADD_ON_LOADED, function(_, name)
     initialize()
 end)
 
-SLASH_COMMANDS["/lib3dobjects"] = function()
+SLASH_COMMANDS["/l3do"] = function()
     d(string.format("%s by %s, version %s", lib_name, lib_author, lib_version))
 end
