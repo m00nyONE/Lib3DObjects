@@ -57,7 +57,7 @@ function lib.examples.create3DSphereMarker(radius, count)
             -- Always rotate from the original position/rotation
             object:SetPosition(startX, startY, startZ)
             object:SetRotation(startPitch, startYaw, startRoll)
-            object:RotateAroundPoint(pX + 1000, pY, pZ, angle, angle, angle)
+            object:RotateAroundPoint(pX, pY + 1000, pZ, angle, angle, angle)
         end)
         table.insert(markers, marker)
     end
