@@ -30,6 +30,7 @@ animations/animations.lua
 
 # Objects
 objects/BaseObject.lua
+objects/Text.lua
 objects/Line.lua
 objects/Marker.lua
 objects/GroundMarker.lua
