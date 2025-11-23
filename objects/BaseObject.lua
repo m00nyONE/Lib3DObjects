@@ -334,31 +334,115 @@ function BaseObject:GetLivetimeMS()
     return GetGameTimeMilliseconds() - self.creationTimestamp
 end
 
+
+-- Yaw (around Y axis)
+local function RotationMatrixYaw(yaw)
+    local c, s = zo_cos(yaw), zo_sin(yaw)
+    return {
+        { c,  0, s },
+        { 0,  1, 0 },
+        { -s, 0, c }
+    }
+end
+
+-- Pitch (around X axis)
+local function RotationMatrixPitch(pitch)
+    local c, s = zo_cos(pitch), zo_sin(pitch)
+    return {
+        { 1, 0,  0 },
+        { 0, c, -s },
+        { 0, s,  c }
+    }
+end
+
+-- Roll (around Z axis)
+local function RotationMatrixRoll(roll)
+    local c, s = zo_cos(roll), zo_sin(roll)
+    return {
+        { c, -s, 0 },
+        { s,  c, 0 },
+        { 0,  0, 1 }
+    }
+end
+
+-- Multiplies two 3x3 matrices
+local function MultiplyMatrices3x3(a, b)
+    local result = {}
+    for i = 1, 3 do
+        result[i] = {}
+        for j = 1, 3 do
+            result[i][j] = 0
+            for k = 1, 3 do
+                result[i][j] = result[i][j] + a[i][k] * b[k][j]
+            end
+        end
+    end
+    return result
+end
+
+
+-- Multiplies a 3x3 matrix by a 3D vector
+local function MultiplyMatrixVector3x3(m, v)
+    return {
+        m[1][1] * v[1] + m[1][2] * v[2] + m[1][3] * v[3],
+        m[2][1] * v[1] + m[2][2] * v[2] + m[2][3] * v[3],
+        m[3][1] * v[1] + m[3][2] * v[2] + m[3][3] * v[3],
+    }
+end
+
+-- Returns a 3x3 rotation matrix from Euler angles (yaw, pitch, roll)
+local function EulerToMatrix(yaw, pitch, roll)
+    local R_yaw = RotationMatrixYaw(yaw)
+    local R_pitch = RotationMatrixPitch(pitch)
+    local R_roll = RotationMatrixRoll(roll)
+    -- Order: pitch, then yaw, then roll (R = R_roll * R_yaw * R_pitch)
+    return MultiplyMatrices3x3(R_roll, MultiplyMatrices3x3(R_yaw, R_pitch))
+end
+
+-- Extracts Euler angles (yaw, pitch, roll) from a 3x3 rotation matrix
+local function MatrixToEuler(R)
+    local yaw, pitch, roll
+
+    if zo_abs(R[3][1]) < 1 - 1e-6 then
+        pitch = math.asin(R[3][1])
+        yaw = zo_atan2(-R[3][2], R[3][3])
+        roll = zo_atan2(-R[2][1], R[1][1])
+    else
+        -- Gimbal lock
+        pitch = (R[3][1] > 0) and (ZO_PI / 2) or (-ZO_PI / 2)
+        yaw = zo_atan2(R[1][2], R[2][2])
+        roll = 0
+    end
+
+    return yaw, pitch, roll
+end
+
+
 function BaseObject:RotateAroundPoint(x, y, z, pitchOffset, yawOffset, rollOffset)
+    -- get current position and rotation
     local pX, pY, pZ = self:GetFullPosition()
+    local pitch, yaw, roll = self:GetRotation()
 
-    -- Translate to origin (relative to pivot)
-    local dx, dy, dz = pX - x, pY - y, pZ - z
+    -- build rotation matrix from offsets
+    local offsetMatrix = EulerToMatrix(yawOffset, pitchOffset, rollOffset)
 
-    -- Apply yaw rotation (around Y axis)
-    local cosY = math.cos(yawOffset)
-    local sinY = math.sin(yawOffset)
-    local rx = cosY * dx - sinY * dz
-    local rz = sinY * dx + cosY * dz
-    local ry = dy -- No change for Y in yaw
+    -- transform position relative to pivot
+    local relPos = {pX - x, pY - y, pZ - z}
+    local newRelPos = MultiplyMatrixVector3x3(offsetMatrix, relPos)
+    local newX, newY, newZ = x + newRelPos[1], y + newRelPos[2], z + newRelPos[3]
 
-    -- Translate back
-    local newX = x + rx
-    local newY = y + ry
-    local newZ = z + rz
+    -- combine rotations
+    local currentMatrix = EulerToMatrix(yaw, pitch, roll)
+    local newMatrix = MultiplyMatrices3x3(offsetMatrix, currentMatrix)
+    local newPitch, newYaw, newRoll = MatrixToEuler(newMatrix)
 
-    -- Update base position (ignoring offsets for simplicity)
-    self:SetPositionX(newX - self.position.offsetX - self.position.animationOffsetX)
-    self:SetPositionY(newY - self.position.offsetY - self.position.animationOffsetY)
-    self:SetPositionZ(newZ - self.position.offsetZ - self.position.animationOffsetZ)
-
-    -- Apply rotation to orientation
-    self:Rotate(pitchOffset, -yawOffset, rollOffset)
+    -- set new position and rotation
+    self:SetPosition(
+            newX - self.position.offsetX - self.position.animationOffsetX,
+            newY - self.position.offsetY - self.position.animationOffsetY,
+            newZ - self.position.offsetZ - self.position.animationOffsetZ
+    )
+    self:SetRotation(-newPitch, -newYaw, -newRoll)
 end
 
 function BaseObject:RotateToCamera()
