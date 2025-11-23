@@ -33,7 +33,7 @@ local function initialize()
     lib.core.createCameraHelperControl()
 
     -- helper objects
-    local _ = lib.examples.createAxis(500)
+    local _ = lib.examples.createAxis(300)
 
 
     --local _ = lib.examples.createGroundMarkerArray(50)
@@ -46,7 +46,7 @@ local function initialize()
     --local _ = lib.examples.createLineSphere(10)
     --local _ = lib.examples.createKubeOutOfLines(200)
     --local _ = lib.examples.createPointingArrowLine()
-    --local _ = lib.examples.create3DSphereMarker(500, 100)
+    local _ = lib.examples.create3DSphereMarker(500, 100)
 
 end
 
