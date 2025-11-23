@@ -41,6 +41,7 @@ objects/UnitMarker.lua
 objects/UnitMarkerMechanic.lua
 
 # Examples
+_examples/helper.lua
 _examples/groundMarker.lua
 _examples/reactiveGroundMarker.lua
 _examples/reactiveFloatingMarkers.lua

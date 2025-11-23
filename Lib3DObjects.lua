@@ -32,6 +32,10 @@ local EM = GetEventManager()
 local function initialize()
     lib.core.createCameraHelperControl()
 
+    -- helper objects
+    local _ = lib.examples.createAxis(500)
+
+
     --local _ = lib.examples.createGroundMarkerArray(50)
     --local _ = lib.examples.createReactiveGroundMarkerArray(50)
     --local _ = lib.examples.createReactiveGroundMarkerConcentricArray(6, 6, 200, 200)
