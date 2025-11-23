@@ -457,6 +457,7 @@ function BaseObject:RotateToPlayerHeading()
     self.rotation.yaw = heading + ZO_PI
 end
 
+-- TODO: FIX
 function BaseObject:RotateToGroundNormal()
     local cP, cY, cR = self:GetRotation()
     self.rotation.pitch = -ZO_PI/2
@@ -526,21 +527,38 @@ end
 
 function BaseObject:EnableVisualNormalVector()
     if self.visualNormalVector then return end
+
     local length = 100
     local line = lib.Line:New("Lib3DObjects/textures/arrow.dds", self.position.x, self.position.y, self.position.z)
     line:SetColor(1, 1, 1, 1)
     line:SetLineWidth(100)
-    line:AddCallback(function(object, distanceToPlayer, distanceToCamera)
+    line:AddCallback(function(object, _, _)
         local fX, fY, fZ = self:GetNormalVector()
         local posX, posY, posZ = self:GetFullPosition()
         local endX, endY, endZ = posX + fX * length, posY + fY * length, posZ + fZ * length
         object:SetStartPoint(posX, posY, posZ)
         object:SetEndPoint(endX, endY, endZ)
     end)
+    local text = lib.Text:New("Normal Vector", self.position.x, self.position.y, self.position.z)
+    text:SetColor(1, 1, 1, 1)
+    text:SetAutoRotationMode(lib.AUTOROTATE_CAMERA)
+    text:AddCallback(function(object, _, _)
+        local fX, fY, fZ = self:GetNormalVector()
+        local posX, posY, posZ = self:GetFullPosition()
+        local endX, endY, endZ = posX + fX * length, posY + fY * length, posZ + fZ * length
+        object:SetPosition(endX, endY, endZ)
+        object:SetText(string.format("(%.2f, %.2f, %.2f)", fX, fY, fZ))
+    end)
 
-    self.visualNormalVector = line
+    self.visualNormalVector = {
+        line = line,
+        text = text,
+    }
 end
 function BaseObject:DisableVisualNormalVector()
     if not self.visualNormalVector then return end
-    self.visualNormalVector:Destroy()
+
+    for _, object in pairs(self.visualNormalVector) do
+        object:Destroy()
+    end
 end

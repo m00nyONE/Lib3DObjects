@@ -1,7 +1,7 @@
 <GuiXml>
     <Controls>
         <Label name="Lib3DObjects_Text" virtual="true" space="WORLD" horizontalAlignment="CENTER" verticalAlignment="CENTER" font="$(MEDIUM_FONT)|$(KB_22)|thick-outline" text="">
-            <Dimensions x="100" y="100" />
+            <Dimensions x="200" y="200" />
             <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER"/>
         </Label>
     </Controls>
