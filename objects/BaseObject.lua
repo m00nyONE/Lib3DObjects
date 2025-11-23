@@ -562,3 +562,9 @@ function BaseObject:DisableVisualNormalVector()
         object:Destroy()
     end
 end
+
+function BaseObject:GetRotationFromVector(fX, fY, fZ)
+    local pitch = zo_atan2(fY, zo_sqrt(fX * fX + fZ * fZ))
+    local yaw = zo_atan2(fX, fZ)
+    return pitch, yaw
+end
