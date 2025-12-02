@@ -3,24 +3,23 @@ local lib = _G[lib_name]
 
 local WM = GetWindowManager()
 
+local cameraControlName = lib_name .. "_CameraHelperControl"
+local cameraControl = nil
+
 function lib.core.createCameraHelperControl()
-    local name = lib_name .. "_CameraHelperControl"
-    local ctrl = WM:CreateControl(name, GuiRoot, CT_CONTROL)
-    ctrl:SetMouseEnabled(false)
-    ctrl:Create3DRenderSpace()
-    ctrl:SetHidden(true)
+    if cameraControl then return end -- Already created
 
-    lib.core.cameraControlName = name
-    lib.core.cameraControl = ctrl
-
-    lib.core.createCameraHelperControl = nil
+    cameraControl = WM:CreateControl(cameraControlName, GuiRoot, CT_CONTROL)
+    cameraControl:SetMouseEnabled(false)
+    cameraControl:Create3DRenderSpace()
+    cameraControl:SetHidden(true)
 end
 
 --- Returns the world position of the current camera.
 --- @return number, number, number x,y,z - The world position of the camera.
 function lib.GetCameraWorldPosition()
-    Set3DRenderSpaceToCurrentCamera(lib.core.cameraControlName)
-    return GuiRender3DPositionToWorldPosition(lib.core.cameraControl:Get3DRenderSpaceOrigin())
+    Set3DRenderSpaceToCurrentCamera(cameraControlName)
+    return GuiRender3DPositionToWorldPosition(cameraControl:Get3DRenderSpaceOrigin())
 end
 
 --function lib.GetDistanceToCamera(x, y, z)
