@@ -215,6 +215,29 @@ function animations.CreateRadiusTrigger(activationRadius, enterCallback, leaveCa
     end
 end
 
+
+function animations.CreateRadiusTriggerForUnit(unitTag, activationRadius, enterCallback, leaveCallback)
+    return function()
+        local fired = false
+        local function callbackFunc(self, distanceToPlayer, distanceToCamera)
+            local unitDistance = self:GetDistanceToUnit(unitTag)
+            if unitDistance > activationRadius then
+                if fired and leaveCallback then
+                    leaveCallback(self, distanceToPlayer, distanceToCamera)
+                end
+                fired = false
+            elseif not fired and unitDistance <= activationRadius then
+                if enterCallback then
+                    enterCallback(self, distanceToPlayer, distanceToCamera)
+                end
+                fired = true
+            end
+        end
+
+        return callbackFunc
+    end
+end
+
 function animations.CreateMouseOverTrigger(activationRadius, enterCallback, leaveCallback)
     return function()
         local fired = false
