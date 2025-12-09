@@ -1,0 +1,8 @@
+<GuiXml>
+    <Controls>
+        <Texture name="Lib3DObjects_OSICompatibleIcon" virtual="true" space="WORLD">
+            <Dimensions x="100" y="100" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER"/>
+        </Texture>
+    </Controls>
+</GuiXml>

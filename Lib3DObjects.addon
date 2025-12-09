@@ -39,6 +39,11 @@ objects/FloatingMarkerMechanic.lua
 objects/UnitMarker.lua
 objects/UnitMarkerMechanic.lua
 
+# Compatibility
+compatibility/OSI/templates.xml
+compatibility/OSI/OSICompatibleIcon.lua
+compatibility/OSI/API.lua
+
 # Examples
 _examples/helper.lua
 _examples/groundMarker.lua
