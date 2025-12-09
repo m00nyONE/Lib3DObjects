@@ -5,6 +5,7 @@ local lib = _G[lib_name]
 
 OSI = OSI or {}
 local OSICompatibleIcon = lib.OSICompatibleIcon
+local positionIcons = {}
 local mechanicIcons = {}
 
 --------------------------------
@@ -40,6 +41,7 @@ function OSI.CreatePositionIcon(x, y, z, texture, size, color, offset, callback)
     local icon = OSICompatibleIcon:New(texture, size, color, offset, callback)
     icon.x, icon.y, icon.z = x, y, z
     icon:SetPosition(x, y, z)
+    table.insert(positionIcons, icon)
 
     return icon
 end
@@ -47,7 +49,17 @@ end
 --- discards position icon
 --- @param icon OSICompatibleIcon the icon to discard
 function OSI.DiscardPositionIcon(icon)
-    icon:Destroy()
+    for i, posIcon in ipairs(positionIcons) do
+        if posIcon == icon then
+            table.remove(positionIcons, i)
+            icon:Destroy()
+            return
+        end
+    end
+end
+
+function OSI.GetPositionIcons()
+    return positionIcons
 end
 
 --------------------------------
@@ -105,9 +117,6 @@ end
 -------- stub functions --------
 --------------------------------
 
---function OSI.GetPositionIcons()
---    return {}
---end
 --function OSI.GetIconForCompanion()
 --    return nil
 --end
