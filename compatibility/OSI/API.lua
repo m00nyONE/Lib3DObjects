@@ -94,15 +94,19 @@ function OSI.ResetMechanicIcons()
     end
 end
 
+--- gets icon currently assigned to player
+--- @param displayName string the display name of the unit
+--- @return OSICompatibleIcon|nil the mechanic icon assigned to the unit, or nil if none
+function OSI.GetIconForPlayer(displayName)
+    return mechanicIcons[string.lower(displayName)]
+end
+
 --------------------------------
 -------- stub functions --------
 --------------------------------
 
 --function OSI.GetPositionIcons()
 --    return {}
---end
---function OSI.GetIconForPlayer(name)
---    return nil
 --end
 --function OSI.GetIconForCompanion()
 --    return nil
