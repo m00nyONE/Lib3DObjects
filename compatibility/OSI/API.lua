@@ -3,7 +3,7 @@
 local lib_name = "Lib3DObjects"
 local lib = _G[lib_name]
 
-local OSI = OSI or {}
+OSI = OSI or {}
 local OSICompatibleIcon = lib.OSICompatibleIcon
 local mechanicIcons = {}
 
