@@ -102,7 +102,7 @@ function OSICompatibleIcon:SetTexture(texture)
     self.ctrl:SetTextureCoords(0, 1, 0, 1)
 end
 function OSICompatibleIcon:SetColor(color)
-    self.ctrl:SetColor(color)
+    self.ctrl:SetColor(color[1], color[2], color[3], 1 )
 end
 
 function OSICompatibleIcon:SetSize(size)
