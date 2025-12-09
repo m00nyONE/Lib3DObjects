@@ -33,7 +33,7 @@ local function initialize()
     lib.core.createCameraHelperControl()
 
     -- helper objects
-    local _ = lib.examples.createAxis(300)
+    --local _ = lib.examples.createAxis(300)
 
 
     --local _ = lib.examples.createGroundMarkerArray(50)
@@ -46,7 +46,7 @@ local function initialize()
     --local _ = lib.examples.createLineSphere(10)
     --local _ = lib.examples.createKubeOutOfLines(200)
     --local _ = lib.examples.createPointingArrowLine()
-    local _ = lib.examples.create3DSphereMarker(500, 100)
+    --local _ = lib.examples.create3DSphereMarker(500, 100)
 
 end
 
@@ -57,6 +57,13 @@ EM:RegisterForEvent(lib_name, EVENT_ADD_ON_LOADED, function(_, name)
     initialize()
 end)
 
-SLASH_COMMANDS["/l3do"] = function()
-    d(string.format("%s by %s, version %s", lib_name, lib_author, lib_version))
+SLASH_COMMANDS["/l3do"] = function(str)
+    if str == "version" then
+        d(string.format("%s by %s, version %s", lib_name, lib_author, lib_version))
+    elseif str == "axis" then
+        local _ = lib.examples.createAxis(500)
+        d("Created axis markers.")
+    elseif str then
+        d(string.format("Unknown command: %s", str))
+    end
 end
