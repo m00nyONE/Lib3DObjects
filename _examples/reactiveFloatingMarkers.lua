@@ -25,6 +25,7 @@ function lib.examples.createSingleReactiveFloatingMarker()
     marker:SetColor(0, 0, 1, 1)
     marker:AddCallback(updateDistanceText)
     marker:AddCallback(marker.MoveToCursor)
+    return marker
 end
 
 function lib.examples.createReactiveFloatingMarkerArray(count)
