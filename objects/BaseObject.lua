@@ -54,7 +54,7 @@ function BaseObject:Initialize(templateControlName, properties)
 
     self.templateControlName = templateControlName
     self.ObjectPool = ObjectPoolManager:Get(self.templateControlName)
-    self.Control = self.ObjectPool:AcquireObject()
+    self.Control, self.ControlKey = self.ObjectPool:AcquireObject()
     local x, y, z = WorldPositionToGuiRender3DPosition(self.position.x + self.position.offsetX, self.position.y + self.position.offsetY, self.position.z + self.position.offsetZ)
     self.Control:SetTransformOffset(x,y,z)
     self.Control.obj = self
@@ -76,7 +76,7 @@ function BaseObject:Destroy()
     -- this is the actual destroy function called after the onDestroyAnimation (if any) is finished
     self._onDestroy = function()
         self.Control.obj = nil
-        self.ObjectPool:ReleaseObject(self.Control)
+        self.ObjectPool:ReleaseObject(self.ControlKey)
         self = nil
     end
 
