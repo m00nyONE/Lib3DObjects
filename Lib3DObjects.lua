@@ -31,23 +31,6 @@ local EM = GetEventManager()
 --[[ doc.lua end ]]
 local function initialize()
     lib.core.createCameraHelperControl()
-
-    -- helper objects
-    --local _ = lib.examples.createAxis(300)
-
-
-    --local _ = lib.examples.createGroundMarkerArray(50)
-    --local _ = lib.examples.createReactiveGroundMarkerArray(50)
-    --local _ = lib.examples.createReactiveGroundMarkerConcentricArray(6, 6, 200, 200)
-    --local _ = lib.examples.createUnitMarkerArray(20)
-    --local _ = lib.examples.createSingleReactiveFloatingMarker()
-    --local _ = lib.examples.createReactiveFloatingMarkerArray(20)
-    --local _ = lib.examples.createSingleLine()
-    --local _ = lib.examples.createLineSphere(10)
-    --local _ = lib.examples.createKubeOutOfLines(200)
-    --local _ = lib.examples.createPointingArrowLine()
-    --local _ = lib.examples.create3DSphereMarker(500, 100)
-
 end
 
 EM:RegisterForEvent(lib_name, EVENT_ADD_ON_LOADED, function(_, name)

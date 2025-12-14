@@ -38,17 +38,3 @@ objects/FloatingMarker.lua
 objects/FloatingMarkerMechanic.lua
 objects/UnitMarker.lua
 objects/UnitMarkerMechanic.lua
-
-# Compatibility
-#compatibility/OdySupportIcons/templates.xml
-#compatibility/OdySupportIcons/OSICompatibleIcon.lua
-#compatibility/OdySupportIcons/API.lua
-
-# Examples
-_examples/helper.lua
-_examples/groundMarker.lua
-_examples/reactiveGroundMarker.lua
-_examples/reactiveFloatingMarkers.lua
-_examples/unitMarker.lua
-_examples/lines.lua
-_examples/sphere.lua
