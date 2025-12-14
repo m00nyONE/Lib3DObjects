@@ -185,8 +185,17 @@ function BaseObject:SetAlpha(alpha)
     self.alpha = alpha
     self.Control:SetAlpha(self.alpha)
 end
+function BaseObject:SetDrawDistance(distance)
+    self.drawDistance = distance
+end
+function BaseObject:GetDrawDistance()
+    return self.drawDistance
+end
 function BaseObject:SetDrawDistanceMeters(distance)
     self.drawDistance = distance * 100 -- meters to centimeters
+end
+function BaseObject:GetDrawDistanceMeters()
+    return self.drawDistance / 100
 end
 function BaseObject:SetVisible(visible)
     self.visible = visible
