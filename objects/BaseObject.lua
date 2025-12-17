@@ -270,18 +270,18 @@ function BaseObject:SetPositionOffsetZ(offsetZ)
 end
 
 function BaseObject:Move(offsetX, offsetY, offsetZ)
-    self.position.x = (self.position.x or 0) + offsetX
-    self.position.y = (self.position.y or 0) + offsetY
-    self.position.z = (self.position.z or 0) + offsetZ
+    self.position.x = (self.position.x or 0) + (offsetX or 0)
+    self.position.y = (self.position.y or 0) + (offsetY or 0)
+    self.position.z = (self.position.z or 0) + (offsetZ or 0)
 end
 function BaseObject:MoveX(offsetX)
-    self.position.x = (self.position.x or 0) + offsetX
+    self.position.x = (self.position.x or 0) + (offsetX or 0)
 end
 function BaseObject:MoveY(offsetY)
-    self.position.y = (self.position.y or 0) + offsetY
+    self.position.y = (self.position.y or 0) + (offsetY or 0)
 end
 function BaseObject:MoveZ(offsetZ)
-    self.position.z = (self.position.z or 0) + offsetZ
+    self.position.z = (self.position.z or 0) + (offsetZ or 0)
 end
 function BaseObject:MoveOffset(offsetX, offsetY, offsetZ)
     self.position.offsetX = (self.position.offsetX or 0) + offsetX
