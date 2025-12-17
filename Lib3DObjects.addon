@@ -31,6 +31,7 @@ animations/animations.lua
 objects/BaseObject.lua
 objects/Point.lua
 objects/Text.lua
+objects/Texture.lua
 objects/Line.lua
 objects/Marker.lua
 objects/GroundMarker.lua
