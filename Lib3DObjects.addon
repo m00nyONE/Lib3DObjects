@@ -22,6 +22,7 @@ animations/animations.xml
 # Core Library
 Lib3DObjects.lua
 core/ObjectPoolManager.lua
+core/ObjectGroupManager.lua
 core/CameraHelper.lua
 
 # Animations
@@ -40,3 +41,6 @@ objects/FloatingMarker.lua
 objects/FloatingMarkerMechanic.lua
 objects/UnitMarker.lua
 objects/UnitMarkerMechanic.lua
+
+# ObjectGroups
+objectGroups/BaseObjectGroup.lua
