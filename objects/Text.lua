@@ -22,6 +22,7 @@ end
 function Text:Destroy()
     self:SetText("")
     self:SetFont(self.originalFont)
+    self:SetDimensions(200, 200)
     BaseObject.Destroy(self)
 end
 
@@ -43,4 +44,22 @@ function Text:SetColor(r, g, b, a)
 end
 function Text:GetColor()
     return self.Control:GetColor()
+end
+function Text:SetDimensions(width, height)
+    self.Control:SetDimensions(width, height)
+end
+function Text:GetDimensions()
+    return self.Control:GetDimensions()
+end
+function Text:SetHeight(height)
+    self.Control:SetHeight(height)
+end
+function Text:GetHeight()
+    return self.Control:GetHeight()
+end
+function Text:SetWidth(width)
+    self.Control:SetWidth(width)
+end
+function Text:GetWidth()
+    return self.Control:GetWidth()
 end
