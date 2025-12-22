@@ -245,9 +245,7 @@ function animations.CreateMouseOverTrigger(activationRadius, enterCallback, leav
             local cX, cY, cZ = lib.GetCameraWorldPosition()
             local fX, fY, fZ = GetCameraForward(SPACE_WORLD)
 
-            local mX = self.position.x + self.position.offsetX + self.position.animationOffsetX
-            local mY = self.position.y + self.position.offsetY + self.position.animationOffsetY
-            local mZ = self.position.z + self.position.offsetZ + self.position.animationOffsetZ
+            local mX, mY, mZ = self:GetFullPosition()
 
             -- Vector from camera to object
             local toObjX = mX - cX
@@ -288,3 +286,8 @@ function animations.CreateMouseOverTrigger(activationRadius, enterCallback, leav
         return callbackFunc
     end
 end
+
+-- TODO:
+--if MouseIsOver(object) then
+--    d("Mouse Over Object: " .. tostring(object.obj))
+--end

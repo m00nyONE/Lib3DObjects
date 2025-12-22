@@ -23,6 +23,8 @@ animations/animations.xml
 Lib3DObjects.lua
 core/ObjectPoolManager.lua
 core/ObjectGroupManager.lua
+core/WorldSpaceRenderer.lua
+core/RenderSpaceRenderer.lua
 core/CameraHelper.lua
 
 # Animations
@@ -33,6 +35,7 @@ objects/BaseObject.lua
 objects/Point.lua
 objects/Text.lua
 objects/Texture.lua
+objects/Texture3D.lua
 objects/Line.lua
 objects/Marker.lua
 objects/GroundMarker.lua

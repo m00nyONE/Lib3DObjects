@@ -25,27 +25,10 @@ ObjectPoolManager.metrics = {
 }
 ObjectPoolManager.isUpdating = false
 
--- this is almost an exact copy of ZO_ControlPool but adapted for 3D world space controls
-local function DefaultControlFactory(pool)
-    local control = ZO_ObjectPool_CreateNamedControl(pool.name, pool.templateName, pool, pool.parent)
-    control:SetHidden(false)
-    control:SetSpace(SPACE_WORLD)
-    control:SetAnchor(CENTER, GuiRoot, CENTER)
-    control:SetScale(1)
-    control:SetTransformScale(0.01)  -- default scale to 1% to represent 1m in the world
-    control:SetTransformNormalizedOriginPoint(0.5,0.5)
-    --control:Set3DRenderSpaceUsesDepthBuffer(true)
-
-    return control
-end
-local function DefaultControlReset(control)
-    control:SetHidden(true)
-end
-
 --- Creates or retrieves a control pool for 3D world space controls.
 --- @param templateName string The control template to use for the controls in this pool.
---- @param ControlFactory function|nil Optional custom factory function for creating controls.
---- @param ControlReset function|nil Optional custom reset function for resetting controls.
+--- @param ControlFactory function The factory function to create new controls.
+--- @param ControlReset function The reset function to reset controls when they are released back to the pool.
 --- @return ZO_ObjectPool The created or retrieved control pool.
 function ObjectPoolManager:Get(templateName, ControlFactory, ControlReset)
     if self.pools[templateName] then
@@ -59,7 +42,7 @@ function ObjectPoolManager:Get(templateName, ControlFactory, ControlReset)
     --HUD_SCENE:AddFragment(windowFragment)
     --HUD_UI_SCENE:AddFragment(windowFragment)
 
-    local pool = ZO_ObjectPool:New(ControlFactory or DefaultControlFactory, ControlReset or DefaultControlReset)
+    local pool = ZO_ObjectPool:New(ControlFactory, ControlReset)
     pool.parent = window
     pool.name = window:GetName()
     pool.templateName = templateName

@@ -13,6 +13,9 @@ local lib = {
     author = "@m00nyONE",
     core = {
         ObjectPoolManager = {},
+        ObjectGroupManager = {},
+        WorldSpaceRenderer = {},
+        RenderSpaceRenderer = {},
     },
 
     AUTOROTATE_NONE = 1, -- manual mode

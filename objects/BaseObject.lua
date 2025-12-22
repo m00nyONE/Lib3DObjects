@@ -2,6 +2,8 @@ local lib_name = "Lib3DObjects"
 local lib = _G[lib_name]
 
 local ObjectPoolManager = lib.core.ObjectPoolManager
+local WorldSpaceRenderer = lib.core.WorldSpaceRenderer
+local RenderSpaceRenderer = lib.core.RenderSpaceRenderer
 
 
 local BaseObject = ZO_InitializingObject:Subclass()
@@ -14,7 +16,13 @@ local AUTOROTATE_GROUND = lib.AUTOROTATE_GROUND
 
 local EM = GetEventManager()
 
-function BaseObject:Initialize(templateControlName, properties)
+--- @param templateControlName string
+--- @param properties table
+--- @param Renderer table optional, defaults to WorldSpaceRenderer
+--- @return BaseObject
+function BaseObject:Initialize(templateControlName, properties, Renderer)
+    Renderer = Renderer or WorldSpaceRenderer
+
     self.autoRotationMode = AUTOROTATE_NONE
     self.visible = true
     self.position = {
@@ -53,11 +61,7 @@ function BaseObject:Initialize(templateControlName, properties)
     end
 
     self.templateControlName = templateControlName
-    self.ObjectPool = ObjectPoolManager:Get(self.templateControlName)
-    self.Control, self.ControlKey = self.ObjectPool:AcquireObject()
-    local x, y, z = WorldPositionToGuiRender3DPosition(self.position.x + self.position.offsetX, self.position.y + self.position.offsetY, self.position.z + self.position.offsetZ)
-    self.Control:SetTransformOffset(x,y,z)
-    self.Control.obj = self
+    Renderer:InitializeObject(self)
 
     self.Initialize = nil -- remove initialization function after first call
 end
@@ -138,40 +142,22 @@ function BaseObject:Update()
         self:RotateToGroundNormal()
     end
 
-    self:_UpdatePosition()
-    self:_UpdateRotation()
+    self:UpdatePosition()
+    self:UpdateRotation()
 
     self.Control:SetHidden(false)
 
     return true
 end
 
-function BaseObject:_UpdatePosition()
-    local sx, sy ,sz = GuiRender3DPositionToWorldPosition(0,0,0)
-    local x = ((self.position.x + self.position.offsetX + self.position.animationOffsetX) - sx) / 100
-    local y = ((self.position.y + self.position.offsetY + self.position.animationOffsetY) - sy) / 100
-    local z = ((self.position.z + self.position.offsetZ + self.position.animationOffsetZ) - sz) / 100
-    self.Control:SetTransformOffset(x, y, z)
-end
-
-function BaseObject:_UpdateRotation()
-    local pitch = self.rotation.pitch + self.rotation.animationOffsetPitch
-    local yaw = self.rotation.yaw + self.rotation.animationOffsetYaw
-    local roll = self.rotation.roll + self.rotation.animationOffsetRoll
-    self.Control:SetTransformRotation(pitch, yaw, roll)
-end
-
 function BaseObject:GetDistanceToCamera()
     local camX, camY, camZ = lib.GetCameraWorldPosition()
-    local distance = zo_distance3D(camX, camY, camZ,
-            self.position.x + self.position.offsetX + self.position.animationOffsetX,
-            self.position.y + self.position.offsetY + self.position.animationOffsetY,
-            self.position.z + self.position.offsetZ + self.position.animationOffsetZ)
+    local distance = zo_distance3D(camX, camY, camZ, self:GetFullPosition())
     return distance
 end
 function BaseObject:GetDistanceToUnit(unitTag)
     local _, playerX, PlayerY, playerZ = GetUnitRawWorldPosition(unitTag)
-    local distance = zo_distance3D(playerX, PlayerY, playerZ, self.position.x + self.position.animationOffsetX, self.position.y + self.position.animationOffsetY, self.position.z + self.position.animationOffsetZ)
+    local distance = zo_distance3D(playerX, PlayerY, playerZ, self:GetFullPosition())
     return distance
 end
 function BaseObject:GetDistanceToPlayer()
@@ -301,6 +287,11 @@ end
 -- rotation
 function BaseObject:GetRotation()
     return self.rotation.pitch, self.rotation.yaw, self.rotation.roll
+end
+function BaseObject:GetFullRotation()
+    return self.rotation.pitch + self.rotation.animationOffsetPitch,
+           self.rotation.yaw + self.rotation.animationOffsetYaw,
+           self.rotation.roll + self.rotation.animationOffsetRoll
 end
 function BaseObject:SetRotation(pitch, yaw, roll)
     self.rotation.pitch = pitch
@@ -469,9 +460,7 @@ end
 -- TODO: FIX
 function BaseObject:RotateToGroundNormal()
     local cP, cY, cR = self:GetRotation()
-    self.rotation.pitch = -ZO_PI/2
-    self.rotation.yaw = cY
-    self.rotation.roll = 0
+    self:SetRotation(-ZO_PI/2, cY, 0)
 end
 
 function BaseObject:SetAutoRotationMode(mode)
@@ -480,9 +469,7 @@ end
 
 function BaseObject:MoveToUnit(unitTag)
     local _, unitX, unitY, unitZ = GetUnitRawWorldPosition(unitTag)
-    self.position.x = unitX
-    self.position.y = unitY
-    self.position.z = unitZ
+    self:SetPosition(unitX, unitY, unitZ)
 end
 
 function BaseObject:MoveToCursor()

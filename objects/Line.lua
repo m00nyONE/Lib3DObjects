@@ -33,6 +33,8 @@ function Line:Initialize(texture, x1, y1, z1, x2, y2, z2)
     self:SetAlpha(0.75)
     self:SetLineWidth(5)
 
+    self:AddCallback(self._UpdatePosition)
+    self:AddCallback(self._UpdateRotation)
     self:AddCallback(self._ResizeToEndpoints)
 end
 
@@ -106,12 +108,6 @@ function Line:_UpdatePosition()
     self.position.x = (self.startX + self.endX) / 2
     self.position.y = (self.startY + self.endY) / 2
     self.position.z = (self.startZ + self.endZ) / 2
-
-    local sx, sy ,sz = GuiRender3DPositionToWorldPosition(0,0,0)
-    local x = ((self.position.x + self.position.offsetX + self.position.animationOffsetX) - sx) / 100
-    local y = ((self.position.y + self.position.offsetY + self.position.animationOffsetY) - sy) / 100
-    local z = ((self.position.z + self.position.offsetZ + self.position.animationOffsetZ) - sz) / 100
-    self.Control:SetTransformOffset(x, y, z)
 end
 
 function Line:_UpdateRotation()
@@ -124,9 +120,4 @@ function Line:_UpdateRotation()
     self.rotation.pitch = -anglePitch + ZO_PI / 2
     self.rotation.yaw = -angleYaw + ZO_PI / 2
     self.rotation.roll = 0
-
-    local pitch = self.rotation.pitch + self.rotation.animationOffsetPitch
-    local yaw = self.rotation.yaw + self.rotation.animationOffsetYaw
-    local roll = self.rotation.roll + self.rotation.animationOffsetRoll
-    self.Control:SetTransformRotation(pitch, yaw, roll)
 end

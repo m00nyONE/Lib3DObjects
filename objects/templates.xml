@@ -11,6 +11,11 @@
             <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER"/>
         </Texture>
     </Controls>
+    <Controls>
+        <Texture name="Lib3DObjects_Texture3D" virtual="true" tier="DT_LOW" layer="DL_BACKGROUND" textureFileReleaseOption="RELEASE_TEXTURE_AT_ZERO_REFERENCES">
+            <Dimensions x="100" y="100" />
+        </Texture>
+    </Controls>
 
     <Controls>
         <Control name="Lib3DObjects_Point" virtual="true" space="WORLD">
