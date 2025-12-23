@@ -186,31 +186,51 @@ function BaseObject:GetDistanceToCamera()
     local distance = zo_distance3D(camX, camY, camZ, self:GetFullPosition())
     return distance
 end
+--- get distance to unit
+--- @param unitTag string
+--- @return number distance
 function BaseObject:GetDistanceToUnit(unitTag)
     local _, playerX, PlayerY, playerZ = GetUnitRawWorldPosition(unitTag)
     local distance = zo_distance3D(playerX, PlayerY, playerZ, self:GetFullPosition())
     return distance
 end
+--- get distance to local player
+--- @return number distance
 function BaseObject:GetDistanceToPlayer()
     return self:GetDistanceToUnit('player')
 end
+--- set scale of the object
+--- @param scale number
+--- @return void
 function BaseObject:SetScale(scale)
     self.scale = scale
     self.Control:SetScale(self.scale)
 end
+--- get scale of the object
+--- @return number scale
 function BaseObject:SetAlpha(alpha)
     self.alpha = alpha
     self.Control:SetAlpha(self.alpha)
 end
+--- set draw distance in centimeters
+--- @param distance number
+--- @return void
 function BaseObject:SetDrawDistance(distance)
     self.drawDistance = distance
 end
+--- get draw distance in centimeters
+--- @return number distance
 function BaseObject:GetDrawDistance()
     return self.drawDistance
 end
+--- set draw distance in meters
+--- @param distance number
+--- @return void
 function BaseObject:SetDrawDistanceMeters(distance)
     self.drawDistance = distance * 100 -- meters to centimeters
 end
+--- get draw distance in meters
+--- @return number distance
 function BaseObject:GetDrawDistanceMeters()
     return self.drawDistance / 100
 end
@@ -219,21 +239,36 @@ end
 function BaseObject:GetPosition()
     return self.position.x, self.position.y, self.position.z
 end
+--- get full position (including offsets)
+--- @return number, number, number x, y, z
 function BaseObject:GetFullPosition()
     return self.position.x + self.position.offsetX + self.position.animationOffsetX,
            self.position.y + self.position.offsetY + self.position.animationOffsetY,
            self.position.z + self.position.offsetZ + self.position.animationOffsetZ
 end
+--- get position offsets
+--- @return number, number, number offsetX, offsetY, offsetZ
 function BaseObject:GetFullPositionOffsets()
     return self.position.offsetX + self.position.animationOffsetX,
            self.position.offsetY + self.position.animationOffsetY,
            self.position.offsetZ + self.position.animationOffsetZ
 end
+--- set main position
+--- @param x number
+--- @param y number
+--- @param z number
+--- @return void
 function BaseObject:SetPosition(x, y, z)
     self.position.x = x
     self.position.y = y
     self.position.z = z
 end
+--- set main position with animation
+--- @param x number
+--- @param y number
+--- @param z number
+--- @param durationMS number duration in milliseconds
+--- @return void
 function BaseObject:SetPositionAnimated(x, y, z, durationMS)
     local beginTime = GetGameTimeMilliseconds()
     local endTime = beginTime + durationMS or 1000 -- default to 1 second if not provided
@@ -254,18 +289,26 @@ function BaseObject:SetPositionAnimated(x, y, z, durationMS)
 
     self:AddCallback(callbackFunc)
 end
-
-
+--- set X position
+--- @param x number
+--- @return void
 function BaseObject:SetPositionX(x)
     self.position.x = x
 end
+--- set Y position
+--- @param y number
+--- @return void
 function BaseObject:SetPositionY(y)
     self.position.y = y
 end
+--- set Z position
+--- @param z number
+--- @return void
 function BaseObject:SetPositionZ(z)
     self.position.z = z
 end
-
+--- get position offsets
+--- @return number, number, number offsetX, offsetY, offsetZ
 function BaseObject:GetPositionOffset()
     return self.position.offsetX, self.position.offsetY, self.position.offsetZ
 end
