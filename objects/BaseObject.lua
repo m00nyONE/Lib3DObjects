@@ -23,8 +23,9 @@ local EM = GetEventManager()
 function BaseObject:Initialize(templateControlName, properties, Renderer)
     Renderer = Renderer or WorldSpaceRenderer
 
+    self.isEnabled = true
+    self.isHidden = false
     self.autoRotationMode = AUTOROTATE_NONE
-    self.visible = true
     self.position = {
         x = 0,
         y = 0,
@@ -105,7 +106,7 @@ function BaseObject:Destroy()
 end
 
 function BaseObject:Update()
-    if not self.visible then
+    if not self:IsEnabled() then
         self.Control:SetHidden(true)
         return false
     end
@@ -145,11 +146,38 @@ function BaseObject:Update()
     self:UpdatePosition()
     self:UpdateRotation()
 
-    self.Control:SetHidden(false)
+    if self.isHidden then
+        self.Control:SetHidden(true)
+        return false
+    end
 
+    self.Control:SetHidden(false)
     return true
 end
-
+--- set enabled/disabled - This will completely skip the update function when disabled
+--- @param enabled boolean
+--- @return void
+function BaseObject:SetEnabled(enabled)
+    self.isEnabled = enabled or true
+end
+--- check if enabled
+--- @return boolean
+function BaseObject:IsEnabled()
+    return self.isEnabled
+end
+--- set hidden/shown - This will only hide the object but still run the update function
+--- @param hidden boolean
+--- @return void
+function BaseObject:SetHidden(hidden)
+    self.isHidden = hidden or false
+end
+--- check if hidden
+--- @return boolean
+function BaseObject:IsHidden()
+    return self.isHidden
+end
+--- get distance to camera
+--- @return number distance
 function BaseObject:GetDistanceToCamera()
     local camX, camY, camZ = lib.GetCameraWorldPosition()
     local distance = zo_distance3D(camX, camY, camZ, self:GetFullPosition())
@@ -183,10 +211,8 @@ end
 function BaseObject:GetDrawDistanceMeters()
     return self.drawDistance / 100
 end
-function BaseObject:SetVisible(visible)
-    self.visible = visible
-end
--- position
+--- get main position
+--- @return number, number, number x, y, z
 function BaseObject:GetPosition()
     return self.position.x, self.position.y, self.position.z
 end

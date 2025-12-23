@@ -47,10 +47,6 @@ function UnitMarker:SetPriority(priority)
     self.priority = priority or 0
 end
 
-function UnitMarker:SetHidden(hidden)
-    self.Control:SetHidden(hidden)
-end
-
 function UnitMarker:AttachToUnit(unitTag)
     -- Remove from old unit cache
     self:_RemoveFromCache()
@@ -100,12 +96,8 @@ function UnitMarker._moveToUnitCallback(object, distanceToPlayer, distanceToCame
     object:MoveToUnit(object.unitTag)
 end
 
-function UnitMarker:_hideConditionCallback(object, distanceToPlayer, distanceToCamera)
+function UnitMarker._hideConditionCallback(object, distanceToPlayer, distanceToCamera)
     if not IsUnitOnline(object.unitTag) then
-        object:SetHidden(true)
-        return
-    end
-    if not IsUnitGrouped(object.unitTag) then
         object:SetHidden(true)
         return
     end
@@ -114,6 +106,6 @@ function UnitMarker:_hideConditionCallback(object, distanceToPlayer, distanceToC
         return
     end
 
-    object.Control:SetHidden(false)
+    object:SetHidden(false)
 end
 
