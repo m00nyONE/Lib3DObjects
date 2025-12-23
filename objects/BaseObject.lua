@@ -111,14 +111,17 @@ function BaseObject:Update()
         return false
     end
 
+    local drawDistance = self.drawDistance
+    local fadeOutDistanceFar = self.fadeOutDistanceFar
+
     local distance = self:GetDistanceToPlayer()
-    if distance > (self.drawDistance + self.fadeOutDistanceFar) then
+    if distance > (drawDistance + fadeOutDistanceFar) then
         self.Control:SetHidden(true)
         return false
     end
 
-    if distance > self.drawDistance then
-        local alpha = self.alpha * (1.0 - ((distance - self.drawDistance) / self.fadeOutDistanceFar))
+    if distance > drawDistance then
+        local alpha = self.alpha * (1.0 - ((distance - drawDistance) / fadeOutDistanceFar))
         self.Control:SetAlpha(alpha)
     else
         self.Control:SetAlpha(self.alpha)

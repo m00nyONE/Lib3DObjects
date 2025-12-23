@@ -39,7 +39,7 @@ function UnitMarker:Initialize(texture, unitTag, offsetY, priority)
 end
 
 function UnitMarker:Destroy()
-    UnitMarker:_RemoveFromCache()
+    self:_RemoveFromCache()
     Marker.Destroy(self)
 end
 

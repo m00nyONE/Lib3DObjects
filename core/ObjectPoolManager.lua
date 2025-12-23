@@ -65,9 +65,10 @@ end
 function ObjectPoolManager:StartUpdateLoop()
     if self.isUpdating then return end
 
-    EM:RegisterForUpdate(lib_name .. "_Update", 0 , function()
+    local function _updateControlsWrapper()
         self:UpdateControls()
-    end)
+    end
+    EM:RegisterForUpdate(lib_name .. "_Update", 0 , _updateControlsWrapper)
     self.isUpdating = true
 end
 
