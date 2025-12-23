@@ -15,7 +15,7 @@ function BaseObjectGroup:Initialize(...)
     self.pitch = 0
     self.yaw = 0
     self.roll = 0
-    self.visible = true
+    self.isEnabled = true
     self.scale = 1
 
     self.visualRefPoint = {}
@@ -46,7 +46,7 @@ function BaseObjectGroup:Destroy()
     self = nil
 end
 function BaseObjectGroup:Update()
-    if not self.visible then
+    if not self.isEnabled then
         return false
     end
     local distanceToPlayer = self:GetDistanceToPlayer()
@@ -57,14 +57,14 @@ function BaseObjectGroup:Update()
         if finished then self:RemoveCallback(callback) end
     end
 end
-function BaseObjectGroup:IsVisible()
-    return self.visible
+function BaseObjectGroup:IsEnabled()
+    return self.isEnabled
 end
-function BaseObjectGroup:SetVisible(visible)
+function BaseObjectGroup:SetVisible(enabled)
     for _, member in ipairs(self.groupMembers) do
-        member:SetVisible(visible)
+        member:SetEnabled(enabled)
     end
-    self.visible = visible
+    self.isEnabled = enabled
 end
 function BaseObjectGroup:SetScale(scale)
     for _, member in ipairs(self.groupMembers) do
