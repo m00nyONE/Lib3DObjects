@@ -92,6 +92,7 @@ end
 --- Runs the highlight animation.
 --- @return void
 function Marker:RunAnimation()
+    self.HighlightControl:SetHidden(false)
     if self.HighlightAnimation:GetTimeline():IsPlaying() then return end
 
     self.HighlightAnimation:GetTimeline():PlayFromStart()
@@ -99,6 +100,7 @@ end
 --- Stops the highlight animation.
 --- @return void
 function Marker:StopAnimation()
+    self.HighlightControl:SetHidden(true)
     self.HighlightAnimation:GetTimeline():Stop()
 end
 
