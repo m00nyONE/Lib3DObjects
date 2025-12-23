@@ -22,6 +22,13 @@ local lib = {
     AUTOROTATE_CAMERA = 2, -- always face camera
     AUTOROTATE_PLAYER = 3, -- always face player heading direction
     AUTOROTATE_GROUND = 4, -- always align to ground normal
+
+    PRIORITY_IGNORE = -1,
+    PRIORITY_DEFAULT = 0,
+    PRIORITY_LOW = 1,
+    PRIORITY_MEDIUM = 1,
+    PRIORITY_HIGH = 2,
+    PRIORITY_MECHANIC = 999,
 }
 local lib_name = lib.name
 local lib_author = lib.author

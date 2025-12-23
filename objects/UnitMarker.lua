@@ -4,16 +4,11 @@ local lib = _G[lib_name]
 local AUTOROTATE_CAMERA = lib.AUTOROTATE_CAMERA
 local Marker = lib.Marker
 
+local PRIORITY_DEFAULT = lib.PRIORITY_DEFAULT
+local PRIORITY_IGNORE = lib.PRIORITY_IGNORE
+
 local UnitMarker = Marker:Subclass()
 lib.UnitMarker = UnitMarker
-
-local UNITMARKER_PRIORITY_MECHANIC = 999
-local UNITMARKER_PRIORITY_IGNORE = -1
-local UNITMARKER_PRIORITY_DEFAULT = 0
-
-lib.UNITMARKER_PRIORITY_DEFAULT = UNITMARKER_PRIORITY_DEFAULT
-lib.UNITMARKER_PRIORITY_IGNORE = UNITMARKER_PRIORITY_IGNORE
-lib.UNITMARKER_PRIORITY_MECHANIC = UNITMARKER_PRIORITY_MECHANIC
 
 local emptyTable = {}
 local unitCache = {}
@@ -21,7 +16,7 @@ local unitCache = {}
 
 function UnitMarker:Initialize(texture, unitTag, offsetY, priority)
     Marker.Initialize(self, texture)
-    priority = priority or 0
+    priority = priority or PRIORITY_DEFAULT
     self:SetPriority(priority)
 
     unitTag = unitTag or "player"
@@ -44,7 +39,7 @@ function UnitMarker:Destroy()
 end
 
 function UnitMarker:SetPriority(priority)
-    self.priority = priority or 0
+    self.priority = priority or PRIORITY_DEFAULT
 end
 
 function UnitMarker:AttachToUnit(unitTag)
@@ -59,7 +54,7 @@ function UnitMarker:AttachToUnit(unitTag)
 end
 
 function UnitMarker:_hasHighestPriorityOnUnit()
-    if self.priority == -1 then
+    if self.priority == PRIORITY_IGNORE then
         return true
     end
     local unitMarkers = unitCache[self.unitTag]

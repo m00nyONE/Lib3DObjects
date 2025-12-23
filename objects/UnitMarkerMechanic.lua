@@ -7,7 +7,7 @@ local UnitMarkerMechanic = UnitMarker:Subclass()
 lib.UnitMarkerMechanic = UnitMarkerMechanic
 
 function UnitMarkerMechanic:Initialize(texture, unitTag, offsetY, from, to, finishCallback)
-    UnitMarker.Initialize(self, texture, unitTag, offsetY, lib.UNITMARKER_PRIORITY_MECHANIC)
+    UnitMarker.Initialize(self, texture, unitTag, offsetY, lib.PRIORITY_MECHANIC)
 
     local function destroySelfWhenCounterEnded()
         self:Destroy()
