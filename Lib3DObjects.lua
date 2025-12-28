@@ -26,8 +26,8 @@ local lib = {
     PRIORITY_IGNORE = -1,
     PRIORITY_DEFAULT = 0,
     PRIORITY_LOW = 1,
-    PRIORITY_MEDIUM = 1,
-    PRIORITY_HIGH = 2,
+    PRIORITY_MEDIUM = 2,
+    PRIORITY_HIGH = 3,
     PRIORITY_MECHANIC = 999,
 }
 local lib_name = lib.name
