@@ -89,6 +89,65 @@ function Marker:GetColor()
     return self.BackgroundControl:GetColor()
 end
 
+--- Gets the animation object used for the marker's animation.
+--- @return Animation
+function Marker:GetAnimation()
+    return self.Animation
+end
+
+--- Checks if the animation is currently playing.
+--- @return boolean
+function Marker:IsAnimationPlaying()
+    return self.Animation:GetTimeline():IsPlaying()
+end
+
+--- Sets the texture used for the animation.
+--- @param texturePath string path to the texture
+--- @param left number|nil left texture coordinate
+--- @param right number|nil right texture coordinate
+--- @param top number|nil top texture coordinate
+--- @param bottom number|nil bottom texture coordinate
+--- @return void
+function Marker:SetAnimationTexture(texturePath, left, right, top, bottom)
+    self.AnimationControl:SetTexture(texturePath)
+    self.AnimationControl:SetTextureCoords(left or 0, right or 1, top or 0, bottom or 1)
+end
+--- Gets the texture used for the animation.
+--- @return string, number, number, number, number texturePath, left, right, top, bottom
+function Marker:GetAnimationTexture()
+    local texture = self.AnimationControl:GetTextureFileName()
+    local left, right, top, bottom = self.AnimationControl:GetTextureCoords()
+    return texture, left, right, top, bottom
+end
+--- Sets the image data for the animation.
+--- @param columns number number of columns in the sprite sheet
+--- @param rows number number of rows in the sprite sheet
+--- @return void
+function Marker:SetAnimationImageData(columns, rows)
+    self.Animation:SetImageData(columns, rows)
+end
+--- Sets the framerate for the animation.
+--- @param framerate number frames per second
+--- @return void
+function Marker:SetAnimationFramerate(framerate)
+    self.Animation:SetFramerate(framerate)
+end
+
+--- Runs the animation.
+--- @return void
+function Marker:RunAnimation()
+    self.AnimationControl:SetHidden(false)
+    if self.Animation:GetTimeline():IsPlaying() then return end
+
+    self.Animation:GetTimeline():PlayFromStart()
+end
+--- Stops the animation.
+--- @return void
+function Marker:StopAnimation()
+    self.AnimationControl:SetHidden(true)
+    self.Animation:GetTimeline():Stop()
+end
+
 --- Starts a counter on the marker's text.
 --- @param from number starting number
 --- @param to number ending number
@@ -136,40 +195,4 @@ function Marker:StartCounter(from, to, tickSeconds, finishCallback)
         end
     end)
 
-end
-
-function Marker:GetAnimation()
-    return self.Animation
-end
-
-function Marker:SetAnimationTexture(texturePath, left, right, top, bottom)
-    self.AnimationControl:SetTexture(texturePath)
-    self.AnimationControl:SetTextureCoords(left or 0, right or 1, top or 0, bottom or 1)
-end
-function Marker:GetAnimationTexture()
-    local texture = self.AnimationControl:GetTextureFileName()
-    local left, right, top, bottom = self.AnimationControl:GetTextureCoords()
-    return texture, left, right, top, bottom
-end
-
-function Marker:SetAnimationImageData(columns, rows)
-    self.Animation:SetImageData(columns, rows)
-end
-function Marker:SetAnimationFramerate(framerate)
-    self.Animation:SetFramerate(framerate)
-end
-
---- Runs the highlight animation.
---- @return void
-function Marker:RunAnimation()
-    self.AnimationControl:SetHidden(false)
-    if self.Animation:GetTimeline():IsPlaying() then return end
-
-    self.Animation:GetTimeline():PlayFromStart()
-end
---- Stops the highlight animation.
---- @return void
-function Marker:StopAnimation()
-    self.AnimationControl:SetHidden(true)
-    self.Animation:GetTimeline():Stop()
 end
