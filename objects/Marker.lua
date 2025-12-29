@@ -49,14 +49,19 @@ end
 
 function Marker:Destroy()
     self.BackgroundControl:SetHidden(false)
+    self.BackgroundControl:SetColor(1, 1, 1, 1)
     self:SetTexture(nil)
 
     self.TextControl:SetHidden(false)
+    self.TextControl:SetColor(1, 1, 1, 1)
+    self:SetFont("$(MEDIUM_FONT)|$(KB_40)|thick-outline")
     self:SetText("")
 
     -- TODO: use animation pool
     self.Animation:GetTimeline():Stop()
     self.AnimationControl:SetHidden(true)
+    self.AnimationControl:SetColor(1, 1, 1, 1)
+
     BaseObject.Destroy(self)
 end
 
