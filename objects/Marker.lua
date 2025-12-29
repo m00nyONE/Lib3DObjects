@@ -15,18 +15,18 @@ function Marker:Initialize(texture)
 
     self.BackgroundControl = self.Control:GetNamedChild("_Background")
     self.TextControl = self.Control:GetNamedChild("_Text")
-    self.HighlightControl = self.Control:GetNamedChild("_Highlight")
-    self.HighlightControl:SetTexture("esoui/art/actionBar/abilityHighlightAnimation.dds")
-    self.HighlightControl:SetTextureCoords(0, 1, 0, 1)
 
-    -- TODO: use animation pool
-    if not self.HighlightControl.animation then
-        self.HighlightControl.animation = CreateSimpleAnimation(ANIMATION_TEXTURE, self.HighlightControl)
+    self.AnimationControl = self.Control:GetNamedChild("_Animation")
+    self.AnimationControl:SetTexture("esoui/art/actionBar/abilityHighlightAnimation.dds") --self:SetAnimationTexture("esoui/art/actionBar/abilityHighlightAnimation.dds", 0, 1, 0, 1)
+    self.AnimationControl:SetTextureCoords(0, 1, 0, 1)
+    if not self.AnimationControl.animation then
+        self.AnimationControl.animation = CreateSimpleAnimation(ANIMATION_TEXTURE, self.AnimationControl)
     end
-    self.HighlightAnimation = self.HighlightControl.animation
-    self.HighlightAnimation:SetImageData(64, 1)
-    self.HighlightAnimation:SetFramerate(30)
-    self.HighlightAnimation:GetTimeline():SetPlaybackType(ANIMATION_PLAYBACK_LOOP, LOOP_INDEFINITELY)
+    self.Animation = self.AnimationControl.animation
+    self.Animation:SetImageData(64, 1) --self:SetAnimationImageData(64, 1)
+    self.Animation:SetFramerate(30) --self:SetAnimationFramerate(30)
+    self.Animation:GetTimeline():SetPlaybackType(ANIMATION_PLAYBACK_LOOP, LOOP_INDEFINITELY)
+    self.Animation:SetHandler("OnStop", function() self.AnimationControl:SetTextureCoords(0, 1, 0, 1) end)
 
     self:SetTexture(texture)
 
@@ -55,8 +55,8 @@ function Marker:Destroy()
     self:SetText("")
 
     -- TODO: use animation pool
-    self.HighlightAnimation:GetTimeline():Stop()
-    self.HighlightControl:SetHidden(true)
+    self.Animation:GetTimeline():Stop()
+    self.AnimationControl:SetHidden(true)
     BaseObject.Destroy(self)
 end
 
@@ -87,21 +87,6 @@ function Marker:SetColor(r, g, b, a)
 end
 function Marker:GetColor()
     return self.BackgroundControl:GetColor()
-end
-
---- Runs the highlight animation.
---- @return void
-function Marker:RunAnimation()
-    self.HighlightControl:SetHidden(false)
-    if self.HighlightAnimation:GetTimeline():IsPlaying() then return end
-
-    self.HighlightAnimation:GetTimeline():PlayFromStart()
-end
---- Stops the highlight animation.
---- @return void
-function Marker:StopAnimation()
-    self.HighlightControl:SetHidden(true)
-    self.HighlightAnimation:GetTimeline():Stop()
 end
 
 --- Starts a counter on the marker's text.
@@ -151,4 +136,40 @@ function Marker:StartCounter(from, to, tickSeconds, finishCallback)
         end
     end)
 
+end
+
+function Marker:GetAnimation()
+    return self.Animation
+end
+
+function Marker:SetAnimationTexture(texturePath, left, right, top, bottom)
+    self.AnimationControl:SetTexture(texturePath)
+    self.AnimationControl:SetTextureCoords(left or 0, right or 1, top or 0, bottom or 1)
+end
+function Marker:GetAnimationTexture()
+    local texture = self.AnimationControl:GetTextureFileName()
+    local left, right, top, bottom = self.AnimationControl:GetTextureCoords()
+    return texture, left, right, top, bottom
+end
+
+function Marker:SetAnimationImageData(columns, rows)
+    self.Animation:SetImageData(columns, rows)
+end
+function Marker:SetAnimationFramerate(framerate)
+    self.Animation:SetFramerate(framerate)
+end
+
+--- Runs the highlight animation.
+--- @return void
+function Marker:RunAnimation()
+    self.AnimationControl:SetHidden(false)
+    if self.Animation:GetTimeline():IsPlaying() then return end
+
+    self.Animation:GetTimeline():PlayFromStart()
+end
+--- Stops the highlight animation.
+--- @return void
+function Marker:StopAnimation()
+    self.AnimationControl:SetHidden(true)
+    self.Animation:GetTimeline():Stop()
 end
