@@ -587,7 +587,7 @@ end
 -- TODO: FIX
 function BaseObject:RotateToGroundNormal()
     local cP, cY, cR = self:GetRotation()
-    self:SetRotation(-ZO_PI/2, cY, 0)
+    self:SetRotation(-ZO_PI/2, cY, cR)
 end
 
 function BaseObject:SetAutoRotationMode(mode)
