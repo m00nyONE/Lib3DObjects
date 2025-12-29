@@ -119,6 +119,12 @@ function BaseObject:Update()
         self.Control:SetHidden(true)
         return false
     end
+    local distanceToCamera = self:GetDistanceToCamera()
+
+    for _, callback in ipairs(self.callbacks) do
+        local finished = callback(self, distance, distanceToCamera)
+        if finished then self:RemoveCallback(callback) end
+    end
 
     if distance > drawDistance then
         local alpha = self.alpha * (1.0 - ((distance - drawDistance) / fadeOutDistanceFar))
@@ -127,15 +133,9 @@ function BaseObject:Update()
         self.Control:SetAlpha(self.alpha)
     end
 
-    local distanceToCamera = self:GetDistanceToCamera()
     if distanceToCamera < self.fadeOutDistanceNear then
         -- fade out when getting closer based on distance. never go over the current max alpha
-        self.Control:SetAlpha(math.min(self.alpha, self.alpha * (distanceToCamera / 500)))
-    end
-
-    for _, callback in ipairs(self.callbacks) do
-        local finished = callback(self, distance, distanceToCamera)
-        if finished then self:RemoveCallback(callback) end
+        self.Control:SetAlpha(math.min(self.alpha, self.alpha * (distanceToCamera / self.fadeOutDistanceNear)))
     end
 
     if self.autoRotationMode == AUTOROTATE_CAMERA then
