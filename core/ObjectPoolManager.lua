@@ -79,6 +79,24 @@ function ObjectPoolManager:StopUpdateLoop()
     self.isUpdating = false
 end
 
+function ObjectPoolManager:UpdateObject(object)
+    if object._updatePreHooks then
+        for _, hook in ipairs(object._updatePreHooks) do
+            hook(object)
+        end
+    end
+
+    local isRendered = object:Update()
+
+    if object._updatePostHooks then
+        for _, hook in ipairs(object._updatePostHooks) do
+            hook(object)
+        end
+    end
+
+    return isRendered
+end
+
 local beginTime = 0
 local endTime = 0
 local diffTime = 0
@@ -93,7 +111,7 @@ function ObjectPoolManager:UpdateControls()
     renderedControls = 0
     for _, pool in pairs(self.pools) do
         for _, object in pairs(pool:GetActiveObjects()) do -- we can also use the pool:ActiveObjectIterator(filterFunctions) here if we need it later
-            local isRendered = object.obj:Update()
+            local isRendered = self:UpdateObject(object.obj)
             if isRendered then renderedControls = renderedControls + 1 end
             updatedControls = updatedControls + 1
         end

@@ -27,8 +27,9 @@ function UnitMarker:Initialize(texture, unitTag, offsetY, priority)
     self:SetPositionOffsetY(offsetY)
     self:SetAutoRotationMode(AUTOROTATE_CAMERA)
 
+    self:CreateUpdatePreHook(self._MoveToUnitPreUpdateHook)
+
     self:AddCallback(self._hideConditionCallback)
-    self:AddCallback(self._moveToUnitCallback)
 
     self:_AddToCache()
 end
@@ -87,12 +88,24 @@ function UnitMarker:_AddToCache()
     table.insert(unitCache[self.unitTag], self)
 end
 
-function UnitMarker._moveToUnitCallback(object, distanceToPlayer, distanceToCamera)
-    object:MoveToUnit(object.unitTag)
+function UnitMarker._MoveToUnitPreUpdateHook(self)
+    self:MoveToUnit(self.unitTag)
 end
 
 function UnitMarker._hideConditionCallback(object, distanceToPlayer, distanceToCamera)
     if not IsUnitOnline(object.unitTag) then
+        object:SetHidden(true)
+        return
+    end
+    if not IsGroupMemberInSameInstanceAsPlayer(object.unitTag) then
+        object:SetHidden(true)
+        return
+    end
+    if not IsGroupMemberInSameWorldAsPlayer(object.unitTag) then
+        object:SetHidden(true)
+        return
+    end
+    if IsGroupMemberInRemoteRegion(object.unitTag) then
         object:SetHidden(true)
         return
     end

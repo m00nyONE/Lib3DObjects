@@ -157,6 +157,61 @@ function BaseObject:Update()
     self.Control:SetHidden(false)
     return true
 end
+--- creates a pre hook for the update function. WARNING! This will always be executed before every update call! It does not check if the object is enabled or not or if it should even be rendered!
+--- @param preHookFunction function
+--- @return void
+function BaseObject:CreateUpdatePreHook(preHookFunction)
+    if not self._updatePreHooks then
+        self._updatePreHooks = {}
+    end
+
+    table.insert(self._updatePreHooks, preHookFunction)
+end
+--- removes a pre hook for the update function
+--- @param preHookFunction function
+--- @return void
+function BaseObject:RemoveUpdatePreHook(preHookFunction)
+    if not self._updatePreHooks then return end
+
+    for i, hook in ipairs(self._updatePreHooks) do
+        if hook == preHookFunction then
+            table.remove(self._updatePreHooks, i)
+            break
+        end
+    end
+
+    if #self._updatePreHooks == 0 then
+        self._updatePreHooks = nil
+    end
+end
+--- creates a post hook for the update function. WARNING! This will always be executed after every update call! It does not check if the object is enabled or not or if it should even be rendered!
+--- @param postHookFunction function
+--- @return void
+function BaseObject:CreateUpdatePostHook(postHookFunction)
+    if not self._updatePostHooks then
+        self._updatePostHooks = {}
+    end
+
+    table.insert(self._updatePostHooks, postHookFunction)
+end
+--- removes a post hook for the update function
+--- @param postHookFunction function
+--- @return void
+function BaseObject:RemoveUpdatePostHook(postHookFunction)
+    if not self._updatePostHooks then return end
+
+    for i, hook in ipairs(self._updatePostHooks) do
+        if hook == postHookFunction then
+            table.remove(self._updatePostHooks, i)
+            break
+        end
+    end
+
+    if #self._updatePostHooks == 0 then
+        self._updatePostHooks = nil
+    end
+end
+
 --- set enabled/disabled - This will completely skip the update function when disabled
 --- @param enabled boolean
 --- @return void
