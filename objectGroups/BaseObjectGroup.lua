@@ -348,6 +348,8 @@ function BaseObjectGroup:MoveZ(deltaZ)
 
     self.z = self.z + deltaZ
 end
+
+-- TODO: move to editor
 function BaseObjectGroup:EnableVisualReferencePoint()
     local visualRefPoint = lib.Point:New(self.x, self.y, self.z)
     visualRefPoint:SetLabel("RefPoint")
@@ -358,6 +360,7 @@ function BaseObjectGroup:EnableVisualReferencePoint()
     end)
     self.visualRefPoint = visualRefPoint
 end
+-- TODO: move to editor
 function BaseObjectGroup:DisableVisualReferencePoint()
     if self.visualRefPoint then
         self.visualRefPoint:Destroy()
