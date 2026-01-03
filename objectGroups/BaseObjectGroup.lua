@@ -267,7 +267,7 @@ function BaseObjectGroup:RemoveCallback(callback)
 
     return false
 end
-function BaseObjectGroup:RemoveAllCallback()
+function BaseObjectGroup:RemoveAllCallbacks()
     ZO_ClearTable(self.callbacks)
 end
 function BaseObjectGroup:SetPosition(newX, newY, newZ)
