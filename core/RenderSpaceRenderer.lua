@@ -34,11 +34,7 @@ function RenderSpaceRenderer.UpdateRotation(object)
 end
 
 function RenderSpaceRenderer.GetNormalVector(object)
-    local pitch, yaw, _ = object:GetFullRotation() -- rotation in radians
-    local x = zo_cos(pitch) * zo_sin(yaw)
-    local y = zo_sin(pitch)
-    local z = zo_cos(pitch) * zo_cos(yaw)
-    return x, y, z -- TODO: this is somehow not correct o.O
+    return object.Control:Get3DRenderSpaceForward()
 end
 function RenderSpaceRenderer.UseDepthBuffer(object, useDepth)
     object.Control:Set3DRenderSpaceUsesDepthBuffer(useDepth)
