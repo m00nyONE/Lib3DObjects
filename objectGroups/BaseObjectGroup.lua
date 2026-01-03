@@ -373,3 +373,41 @@ end
 function BaseObjectGroup:GetReferencePoint()
     return self.x, self.y, self.z
 end
+function BaseObjectGroup:GetBoundingBoxPoints()
+    -- initialize corner points if not already done. Then we can reuse them instead of returning a new table every time. This prevents a possible memory leak when this function is called often.
+    if not self.cp1 then
+        self.cp1 = {}
+        self.cp2 = {}
+        self.cp3 = {}
+        self.cp4 = {}
+        self.cp5 = {}
+        self.cp6 = {}
+        self.cp7 = {}
+        self.cp8 = {}
+    end
+
+    local cp1, cp2, cp3, cp4, cp5, cp6, cp7, cp8 = self.cp1, self.cp2, self.cp3, self.cp4, self.cp5, self.cp6, self.cp7, self.cp8
+    local minX, minY, minZ = math.huge, math.huge, math.huge
+    local maxX, maxY, maxZ = -math.huge, -math.huge, -math.huge
+
+    for _, member in ipairs(self.groupMembers) do
+        local x, y, z = member:GetFullPosition()
+        if x < minX then minX = x end
+        if y < minY then minY = y end
+        if z < minZ then minZ = z end
+        if x > maxX then maxX = x end
+        if y > maxY then maxY = y end
+        if z > maxZ then maxZ = z end
+    end
+
+    cp1[1], cp1[2], cp1[3] = minX, minY, minZ
+    cp2[1], cp2[2], cp2[3] = maxX, minY, minZ
+    cp3[1], cp3[2], cp3[3] = minX, maxY, minZ
+    cp4[1], cp4[2], cp4[3] = maxX, maxY, minZ
+    cp5[1], cp5[2], cp5[3] = minX, minY, maxZ
+    cp6[1], cp6[2], cp6[3] = maxX, minY, maxZ
+    cp7[1], cp7[2], cp7[3] = minX, maxY, maxZ
+    cp8[1], cp8[2], cp8[3] = maxX, maxY, maxZ
+
+    return cp1, cp2, cp3, cp4, cp5, cp6, cp7, cp8
+end
