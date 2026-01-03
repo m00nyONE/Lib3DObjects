@@ -40,6 +40,9 @@ function RenderSpaceRenderer.GetNormalVector(object)
     local z = zo_cos(pitch) * zo_cos(yaw)
     return x, y, z -- TODO: this is somehow not correct o.O
 end
+function RenderSpaceRenderer.UseDepthBuffer(object, useDepth)
+    object.Control:Set3DRenderSpaceUsesDepthBuffer(useDepth)
+end
 
 function RenderSpaceRenderer:InitializeObject(object)
     object.ObjectPool = ObjectPoolManager:Get(object.templateControlName, self.ControlFactory, self.ControlReset)
@@ -52,4 +55,5 @@ function RenderSpaceRenderer:InitializeObject(object)
     object.UpdateRotation = self.UpdateRotation
 
     object.GetNormalVector = self.GetNormalVector
+    object.UseDepthBuffer = self.UseDepthBuffer
 end
