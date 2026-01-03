@@ -544,7 +544,6 @@ local function MatrixToEuler(R)
     return yaw, pitch, roll
 end
 
-
 function BaseObject:RotateAroundPoint(x, y, z, pitchOffset, yawOffset, rollOffset)
     -- get current position and rotation
     local pX, pY, pZ = self:GetFullPosition()
@@ -648,6 +647,7 @@ function BaseObject:RemoveAllCallback()
     ZO_ClearTable(self.callbacks)
 end
 
+-- TODO: move to editor
 function BaseObject:EnableVisualNormalVector()
     if self.visualNormalVector then return end
 
@@ -680,6 +680,8 @@ function BaseObject:EnableVisualNormalVector()
         text = text,
     }
 end
+
+-- TODO: move to editor
 function BaseObject:DisableVisualNormalVector()
     if not self.visualNormalVector then return end
 
