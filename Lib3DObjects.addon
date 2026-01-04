@@ -35,7 +35,8 @@ util/util.lua
 # Animations
 animations/animations.lua
 
-# Objects
+## Objects
+# Base
 objects/BaseObject.lua
 objects/Point.lua
 objects/Text.lua

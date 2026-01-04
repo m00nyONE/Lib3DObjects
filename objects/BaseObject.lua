@@ -9,7 +9,8 @@ lib.BaseObject = BaseObject
 
 local AUTOROTATE_NONE = lib.AUTOROTATE_NONE
 local AUTOROTATE_CAMERA = lib.AUTOROTATE_CAMERA
-local AUTOROTATE_PLAYER = lib.AUTOROTATE_PLAYER
+local AUTOROTATE_PLAYER_HEADING = lib.AUTOROTATE_PLAYER_HEADING
+local AUTOROTATE_PLAYER_POSITION = lib.AUTOROTATE_PLAYER_POSITION
 local AUTOROTATE_GROUND = lib.AUTOROTATE_GROUND
 
 local up = { 0, 1, 0 }
@@ -72,14 +73,8 @@ function BaseObject:Initialize(templateControlName, properties, Renderer)
 
     self.Initialize = nil -- remove initialization function after first call
 end
-
-function BaseObject:SetOnDestroyAnimation(callback)
-    self.onDestroyAnimation = callback
-end
-function BaseObject:ClearOnDestroyAnimation()
-    self.onDestroyAnimation = nil
-end
-
+--- Destroys the object, optionally playing an onDestroyAnimation before actual destruction.
+--- @return void
 function BaseObject:Destroy()
     -- remove all references to callbacks
     ZO_ClearTable(self.callbacks)
@@ -110,7 +105,29 @@ function BaseObject:Destroy()
         end
     end)
 end
-
+--- set onDestroy animation callback
+--- @param callback function
+--- @return void
+function BaseObject:SetOnDestroyAnimation(callback)
+    self.onDestroyAnimation = callback
+end
+--- clear onDestroy animation callback
+--- @return void
+function BaseObject:ClearOnDestroyAnimation()
+    self.onDestroyAnimation = nil
+end
+--- update position of the object - to be implemented by RendererClass
+--- @return void
+function BaseObject:UpdatePosition()
+    error("UpdatePosition needs to be implemented by a RendererClass")
+end
+--- update rotation of the object - to be implemented by RendererClass
+--- @return void
+function BaseObject:UpdateRotation()
+    error("UpdateRotation needs to be implemented by a RendererClass")
+end
+--- update function called every frame by the ObjectPoolManager
+--- @return boolean isRendered
 function BaseObject:Update()
     if not self:IsEnabled() then
         self.Control:SetHidden(true)
@@ -146,8 +163,10 @@ function BaseObject:Update()
 
     if self.autoRotationMode == AUTOROTATE_CAMERA then
         self:RotateToCamera()
-    elseif self.autoRotationMode == AUTOROTATE_PLAYER then
+    elseif self.autoRotationMode == AUTOROTATE_PLAYER_HEADING then
         self:RotateToPlayerHeading()
+    elseif self.autoRotationMode == AUTOROTATE_PLAYER_POSITION then
+        self:RotateToPlayerPosition()
     elseif self.autoRotationMode == AUTOROTATE_GROUND then
         self:RotateToGroundNormal()
     end
@@ -260,12 +279,22 @@ end
 function BaseObject:GetDistanceToPlayer()
     return self:GetDistanceToUnit('player')
 end
+--- get scale of the object
+--- @return number scale
+function BaseObject:GetScale()
+    return self.scale
+end
 --- set scale of the object
 --- @param scale number
 --- @return void
 function BaseObject:SetScale(scale)
     self.scale = scale
     self.Control:SetScale(self.scale)
+end
+--- get alpha of the object
+--- @return number alpha
+function BaseObject:GetAlpha()
+    return self.alpha
 end
 --- get scale of the object
 --- @return number scale
@@ -295,6 +324,8 @@ end
 function BaseObject:GetDrawDistanceMeters()
     return self.drawDistance / 100
 end
+
+-- positions
 --- get main position
 --- @return number, number, number x, y, z
 function BaseObject:GetPosition()
@@ -307,162 +338,303 @@ function BaseObject:GetFullPosition()
            self.position.y + self.position.offsetY + self.position.animationOffsetY,
            self.position.z + self.position.offsetZ + self.position.animationOffsetZ
 end
---- get position offsets
---- @return number, number, number offsetX, offsetY, offsetZ
-function BaseObject:GetFullPositionOffsets()
-    return self.position.offsetX + self.position.animationOffsetX,
-           self.position.offsetY + self.position.animationOffsetY,
-           self.position.offsetZ + self.position.animationOffsetZ
-end
 --- set main position
 --- @param x number
 --- @param y number
 --- @param z number
 --- @return void
 function BaseObject:SetPosition(x, y, z)
-    self.position.x = x
-    self.position.y = y
-    self.position.z = z
-end
---- set main position with animation
---- @param x number
---- @param y number
---- @param z number
---- @param durationMS number duration in milliseconds
---- @return void
-function BaseObject:SetPositionAnimated(x, y, z, durationMS)
-    local beginTime = GetGameTimeMilliseconds()
-    local endTime = beginTime + durationMS or 1000 -- default to 1 second if not provided
-
-    local startX = self.position.x
-    local startY = self.position.y
-    local startZ = self.position.z
-
-    local callbackFunc = function(self)
-        local progress = (GetGameTimeMilliseconds() - beginTime) / (endTime - beginTime) -- value between 0 and 1
-        if progress >= 1 then return true end
-        -- Ease out: fast start, slow end (using quadratic ease out)
-        local eased = 1 - (1 - progress) * (1 - progress)
-        self.position.x = startX + (x - startX) * eased
-        self.position.y = startY + (y - startY) * eased
-        self.position.z = startZ + (z - startZ) * eased
-    end
-
-    self:AddCallback(callbackFunc)
+    self.position.x = x or self.position.x
+    self.position.y = y or self.position.y
+    self.position.z = z or self.position.z
 end
 --- set X position
 --- @param x number
 --- @return void
 function BaseObject:SetPositionX(x)
-    self.position.x = x
+    self.position.x = x or self.position.x
 end
 --- set Y position
 --- @param y number
 --- @return void
 function BaseObject:SetPositionY(y)
-    self.position.y = y
+    self.position.y = y or self.position.y
 end
 --- set Z position
 --- @param z number
 --- @return void
 function BaseObject:SetPositionZ(z)
-    self.position.z = z
+    self.position.z = z or self.position.z
 end
 --- get position offsets
 --- @return number, number, number offsetX, offsetY, offsetZ
 function BaseObject:GetPositionOffset()
     return self.position.offsetX, self.position.offsetY, self.position.offsetZ
 end
+--- set position offsets
+--- @param offsetX number
+--- @param offsetY number
+--- @param offsetZ number
+--- @return void
 function BaseObject:SetPositionOffset(offsetX, offsetY, offsetZ)
-    self.position.offsetX = offsetX
-    self.position.offsetY = offsetY
-    self.position.offsetZ = offsetZ
+    self.position.offsetX = offsetX or self.position.offsetX
+    self.position.offsetY = offsetY or self.position.offsetY
+    self.position.offsetZ = offsetZ or self.position.offsetZ
 end
+--- set position offset X
+--- @param offsetX number
+--- @return void
 function BaseObject:SetPositionOffsetX(offsetX)
-    self.position.offsetX = offsetX
+    self.position.offsetX = offsetX or self.position.offsetX
 end
+--- set position offset Y
+--- @param offsetY number
+--- @return void
 function BaseObject:SetPositionOffsetY(offsetY)
-    self.position.offsetY = offsetY
+    self.position.offsetY = offsetY or self.position.offsetY
 end
+--- set position offset Z
+--- @param offsetZ number
+--- @return void
 function BaseObject:SetPositionOffsetZ(offsetZ)
-    self.position.offsetZ = offsetZ
+    self.position.offsetZ = offsetZ or self.position.offsetZ
+end
+--- get animation position offsets
+--- @return number, number, number offsetX, offsetY, offsetZ
+function BaseObject:GetAnimationOffset()
+    return self.position.animationOffsetX, self.position.animationOffsetY, self.position.animationOffsetZ
+end
+--- set animation position offsets
+--- @param offsetX number
+--- @param offsetY number
+--- @param offsetZ number
+--- @return void
+function BaseObject:SetAnimationOffset(offsetX, offsetY, offsetZ)
+    self.position.animationOffsetX = offsetX or self.position.animationOffsetX
+    self.position.animationOffsetY = offsetY or self.position.animationOffsetY
+    self.position.animationOffsetZ = offsetZ or self.position.animationOffsetZ
+end
+--- set animation position offset X
+--- @param offsetX number
+--- @return void
+function BaseObject:SetAnimationOffsetX(offsetX)
+    self.position.animationOffsetX = offsetX
+end
+--- set animation position offset Y
+--- @param offsetY number
+--- @return void
+function BaseObject:SetAnimationOffsetY(offsetY)
+    self.position.animationOffsetY = offsetY
+end
+--- set animation position offset Z
+--- @param offsetZ number
+--- @return void
+function BaseObject:SetAnimationOffsetZ(offsetZ)
+    self.position.animationOffsetZ = offsetZ
 end
 
+-- move position
+--- move object by given x, y, z offsets. The offsets are added to the current position and are absolute in the end.
+--- @param offsetX number
+--- @param offsetY number
+--- @param offsetZ number
+--- @return void
 function BaseObject:Move(offsetX, offsetY, offsetZ)
     self.position.x = (self.position.x or 0) + (offsetX or 0)
     self.position.y = (self.position.y or 0) + (offsetY or 0)
     self.position.z = (self.position.z or 0) + (offsetZ or 0)
 end
+--- move object by given x offset. The offset is added to the current position and is absolute in the end.
+--- @param offsetX number
+--- @return void
 function BaseObject:MoveX(offsetX)
     self.position.x = (self.position.x or 0) + (offsetX or 0)
 end
+--- move object by given y offset. The offset is added to the current position and is absolute in the end.
+--- @param offsetY number
+--- @return void
 function BaseObject:MoveY(offsetY)
     self.position.y = (self.position.y or 0) + (offsetY or 0)
 end
+--- move object by given z offset. The offset is added to the current position and is absolute in the end.
+--- @param offsetZ number
+--- @return void
 function BaseObject:MoveZ(offsetZ)
     self.position.z = (self.position.z or 0) + (offsetZ or 0)
 end
+--- move object by given x, y, z animation offsets. The offsets are added to the current animation offsets and are absolute in the end.
+--- @param offsetX number
+--- @param offsetY number
+--- @param offsetZ number
+--- @return void
 function BaseObject:MoveOffset(offsetX, offsetY, offsetZ)
-    self.position.offsetX = (self.position.offsetX or 0) + offsetX
-    self.position.offsetY = (self.position.offsetY or 0) + offsetY
-    self.position.offsetZ = (self.position.offsetZ or 0) + offsetZ
+    self.position.offsetX = (self.position.offsetX or 0) + (offsetX or 0)
+    self.position.offsetY = (self.position.offsetY or 0) + (offsetY or 0)
+    self.position.offsetZ = (self.position.offsetZ or 0) + (offsetZ or 0)
 end
+--- move object by given x animation offset. The offset is added to the current animation offset and is absolute in the end.
+--- @param offsetX number
+--- @return void
 function BaseObject:MoveOffsetX(offsetX)
-    self.position.offsetX = (self.position.offsetX or 0) + offsetX
+    self.position.offsetX = (self.position.offsetX or 0) + (offsetX or 0)
 end
+--- move object by given y animation offset. The offset is added to the current animation offset and is absolute in the end.
+--- @param offsetY number
+--- @return void
 function BaseObject:MoveOffsetY(offsetY)
-    self.position.offsetY = (self.position.offsetY or 0) + offsetY
+    self.position.offsetY = (self.position.offsetY or 0) + (offsetY or 0)
 end
+--- move object by given z animation offset. The offset is added to the current animation offset and is absolute in the end.
+--- @param offsetZ number
+--- @return void
 function BaseObject:MoveOffsetZ(offsetZ)
-    self.position.offsetZ = (self.position.offsetZ or 0) + offsetZ
+    self.position.offsetZ = (self.position.offsetZ or 0) + (offsetZ or 0)
+end
+--- move object by given x, y, z animation offsets. The offsets are added to the current animation offsets and are absolute in the end.
+--- @param offsetX number
+--- @param offsetY number
+--- @param offsetZ number
+--- @return void
+function BaseObject:MoveAnimationOffset(offsetX, offsetY, offsetZ)
+    self.position.animationOffsetX = (self.position.animationOffsetX or 0) + (offsetX or 0)
+    self.position.animationOffsetY = (self.position.animationOffsetY or 0) + (offsetY or 0)
+    self.position.animationOffsetZ = (self.position.animationOffsetZ or 0) + (offsetZ or 0)
+end
+--- move object by given x animation offset. The offset is added to the current animation offset and is absolute in the end.
+--- @param offsetX number
+--- @return void
+function BaseObject:MoveAnimationOffsetX(offsetX)
+    self.position.animationOffsetX = (self.position.animationOffsetX or 0) + (offsetX or 0)
+end
+--- move object by given y animation offset. The offset is added to the current animation offset and is absolute in the end.
+--- @param offsetY number
+--- @return void
+function BaseObject:MoveAnimationOffsetY(offsetY)
+    self.position.animationOffsetY = (self.position.animationOffsetY or 0) + (offsetY or 0)
+end
+--- move object by given z animation offset. The offset is added to the current animation offset and is absolute in the end.
+--- @param offsetZ number
+--- @return void
+function BaseObject:MoveAnimationOffsetZ(offsetZ)
+    self.position.animationOffsetZ = (self.position.animationOffsetZ or 0) + (offsetZ or 0)
 end
 
 -- rotation
+--- get main rotation
+--- @return number, number, number pitch, yaw, roll
 function BaseObject:GetRotation()
     return self.rotation.pitch, self.rotation.yaw, self.rotation.roll
 end
+--- get full rotation (including animation offsets)
+--- @return number, number, number pitch, yaw, roll
 function BaseObject:GetFullRotation()
     return self.rotation.pitch + self.rotation.animationOffsetPitch,
            self.rotation.yaw + self.rotation.animationOffsetYaw,
            self.rotation.roll + self.rotation.animationOffsetRoll
 end
+--- set main rotation
+--- @param pitch number
+--- @param yaw number
+--- @param roll number
+--- @return void
 function BaseObject:SetRotation(pitch, yaw, roll)
     self.rotation.pitch = pitch
     self.rotation.yaw = yaw
     self.rotation.roll = roll
 end
+--- set rotation pitch
+--- @param pitch number
+--- @return void
 function BaseObject:SetRotationPitch(pitch)
     self.rotation.pitch = pitch
 end
+--- set rotation yaw
+--- @param yaw number
+--- @return void
 function BaseObject:SetRotationYaw(yaw)
     self.rotation.yaw = yaw
 end
+--- set rotation roll
+--- @param roll number
+--- @return void
 function BaseObject:SetRotationRoll(roll)
     self.rotation.roll = roll
 end
+--- rotate object by given pitch, yaw, roll offsets. The offsets are added to the current rotation and are absolute in the end. This does not rotate the object locally.
+--- @param offsetPitch number
+--- @param offsetYaw number
+--- @param offsetRoll number
+--- @return void
 function BaseObject:Rotate(offsetPitch, offsetYaw, offsetRoll)
     self.rotation.pitch = (self.rotation.pitch or 0) + offsetPitch
     self.rotation.yaw = (self.rotation.yaw or 0) + offsetYaw
     self.rotation.roll = (self.rotation.roll or 0) + offsetRoll
 end
+--- rotate object by given pitch offsets. The offsets are added to the current rotation and are absolute in the end. This does not rotate the object locally.
+--- @param offsetPitch number
+--- @return void
 function BaseObject:RotatePitch(offsetPitch)
     self.rotation.pitch = (self.rotation.pitch or 0) + offsetPitch
 end
+--- rotate object by given yaw offsets. The offsets are added to the current rotation and are absolute in the end. This does not rotate the object locally.
+--- @param offsetYaw number
+--- @return void
 function BaseObject:RotateYaw(offsetYaw)
     self.rotation.yaw = (self.rotation.yaw or 0) + offsetYaw
 end
+--- rotate object by given roll offsets. The offsets are added to the current rotation and are absolute in the end. This does not rotate the object locally.
+--- @param offsetRoll number
+--- @return void
 function BaseObject:RotateRoll(offsetRoll)
     self.rotation.roll = (self.rotation.roll or 0) + offsetRoll
 end
-
---- @return number normalX, number normalY, number normalZ
-function BaseObject:GetNormalVector()
-    return self.Control:GetNormal()
+--- get animation rotation offsets
+--- @return number, number, number offsetPitch, offsetYaw, offsetRoll
+function BaseObject:GetAnimationRotationOffset()
+    return self.rotation.animationOffsetPitch, self.rotation.animationOffsetYaw, self.rotation.animationOffsetRoll
+end
+--- set animation rotation offsets
+--- @param offsetPitch number
+--- @param offsetYaw number
+--- @param offsetRoll number
+--- @return void
+function BaseObject:SetAnimationRotationOffset(offsetPitch, offsetYaw, offsetRoll)
+    self.rotation.animationOffsetPitch = offsetPitch or self.rotation.animationOffsetPitch
+    self.rotation.animationOffsetYaw = offsetYaw or self.rotation.animationOffsetYaw
+    self.rotation.animationOffsetRoll = offsetRoll or self.rotation.animationOffsetRoll
+end
+--- set animation rotation offset pitch
+--- @param offsetPitch number
+--- @return void
+function BaseObject:SetAnimationRotationOffsetPitch(offsetPitch)
+    self.rotation.animationOffsetPitch = offsetPitch or self.rotation.animationOffsetPitch
+end
+--- set animation rotation offset yaw
+--- @param offsetYaw number
+--- @return void
+function BaseObject:SetAnimationRotationOffsetYaw(offsetYaw)
+    self.rotation.animationOffsetYaw = offsetYaw or self.rotation.animationOffsetYaw
+end
+--- set animation rotation offset roll
+--- @param offsetRoll number
+--- @return void
+function BaseObject:SetAnimationRotationOffsetRoll(offsetRoll)
+    self.rotation.animationOffsetRoll = offsetRoll or self.rotation.animationOffsetRoll
 end
 
+--- get normal vector (facing direction)
+--- @return number normalX, number normalY, number normalZ
+function BaseObject:GetNormalVector()
+    error("GetNormalVector needs to be implemented by a RendererClass")
+end
+
+--- get creation timestamp in milliseconds
+--- @return number creationTimestamp
 function BaseObject:GetCreationTimestamp()
     return self.creationTimestamp
 end
+--- get livetime of the object in milliseconds
+--- @return number livetimeMS
 function BaseObject:GetLivetimeMS()
     return GetGameTimeMilliseconds() - self.creationTimestamp
 end
@@ -501,33 +673,55 @@ function BaseObject:RotateAroundPoint(x, y, z, pitchOffset, yawOffset, rollOffse
     self:SetRotation(-newPitch, -newYaw, -newRoll)
 end
 
+--- rotate object to face camera
+--- @return void
 function BaseObject:RotateToCamera()
     local fX, fY, fZ = GetCameraForward(SPACE_WORLD)
     self.rotation.pitch = zo_atan2(fY, zo_sqrt(fX * fX + fZ * fZ))
     self.rotation.yaw = zo_atan2(fX, fZ) - ZO_PI
     self.rotation.roll = 0
 end
-
+--- rotate object to face player heading
+--- @return void
 function BaseObject:RotateToPlayerHeading()
     local _, _, heading = GetMapPlayerPosition("player")
     self.rotation.yaw = heading + ZO_PI
 end
+--- rotate to face the player
+--- @return void
+function BaseObject:RotateToPlayerPosition()
+    local _, playerX, playerY, playerZ = GetUnitRawWorldPosition("player")
+    local objX, objY, objZ = self:GetFullPosition()
+    local dirX = playerX - objX
+    local dirY = playerY - objY
+    local dirZ = playerZ - objZ
 
--- TODO: FIX
+    self.rotation.yaw = zo_atan2(dirX, dirZ) + ZO_PI
+    self.rotation.pitch = zo_atan2(dirY, zo_sqrt(dirX * dirX + dirZ * dirZ))
+end
+
+--- rotate object to be aligned with ground normal (facing up from the ground)
+--- @return void
 function BaseObject:RotateToGroundNormal()
     local cP, cY, cR = self:GetRotation()
     self:SetRotation(-ZO_PI/2, cY, cR)
 end
-
+--- set auto rotation mode
+--- @param mode number one of AUTOROTATE_NONE, AUTOROTATE_CAMERA, AUTOROTATE_PLAYER_HEADING, AUTOROTATE_PLAYER_POSITION, AUTOROTATE_GROUND
+--- @return void
 function BaseObject:SetAutoRotationMode(mode)
     self.autoRotationMode = mode
 end
 
+--- move object to unit position
+--- @param unitTag string
+--- @return void
 function BaseObject:MoveToUnit(unitTag)
     local _, unitX, unitY, unitZ = GetUnitRawWorldPosition(unitTag)
     self:SetPosition(unitX, unitY, unitZ)
 end
-
+--- move object to cursor position
+--- @return void
 function BaseObject:MoveToCursor()
     -- this code is inspired by M0RMarkers
     local camX, camY, camZ = lib.GetCameraWorldPosition()
@@ -537,7 +731,7 @@ function BaseObject:MoveToCursor()
 
     if pitch > zo_rad(-2) then return end -- just not too far off the screen
 
-    local _, _, y, _ = GetUnitRawWorldPosition('player') --feet position
+    local _, _, y, _ = GetUnitRawWorldPosition("player") --feet position
     local r = (camY-y)/(zo_tan(pitch))
     local x = r*zo_sin(yaw) + camX
     local z = r*zo_cos(yaw) + camZ
@@ -571,56 +765,41 @@ function BaseObject:RemoveCallback(callback)
 
     return false
 end
-
-function BaseObject:RemoveAllCallback()
+--- remove all callback functions
+--- @return void
+function BaseObject:RemoveAllCallbacks()
     ZO_ClearTable(self.callbacks)
 end
 
--- TODO: move to editor
-function BaseObject:EnableVisualNormalVector()
-    if self.visualNormalVector then return end
+-- TODO: replace with quaternion math for better performance
+--- Gets the forward vector of the object.
+--- @return number, number, number forwardX, forwardY, forwardZ
+function BaseObject:GetForwardVector()
+    local pitch, yaw, roll = self:GetFullRotation()
+    local m = EulerToMatrix(yaw, pitch, roll)
+    local nv = MultiplyMatrixVector3x3(m, forward)
 
-    local length = 100
-    local line = lib.Line:New("Lib3DObjects/textures/arrow.dds", self.position.x, self.position.y, self.position.z)
-    line:SetDrawDistance(self.drawDistance)
-    line:SetColor(1, 1, 1, 1)
-    line:SetLineWidth(100)
-    line:AddCallback(function(object, _, _)
-        local fX, fY, fZ = self:GetNormalVector()
-        local posX, posY, posZ = self:GetFullPosition()
-        local endX, endY, endZ = posX + fX * length, posY + fY * length, posZ + fZ * length
-        object:SetStartPoint(posX, posY, posZ)
-        object:SetEndPoint(endX, endY, endZ)
-    end)
-    local text = lib.Text:New("Normal Vector", self.position.x, self.position.y, self.position.z)
-    text:SetDrawDistance(self.drawDistance)
-    text:SetColor(1, 1, 1, 1)
-    text:SetAutoRotationMode(lib.AUTOROTATE_CAMERA)
-    text:AddCallback(function(object, _, _)
-        local fX, fY, fZ = self:GetNormalVector()
-        local posX, posY, posZ = self:GetFullPosition()
-        local endX, endY, endZ = posX + fX * length, posY + fY * length, posZ + fZ * length
-        object:SetPosition(endX, endY, endZ)
-        object:SetText(string.format("(%.2f, %.2f, %.2f)", fX, fY, fZ))
-    end)
-
-    self.visualNormalVector = {
-        line = line,
-        text = text,
-    }
+    return nv[1], nv[2], nv[3]
 end
+--- Gets the right vector of the object.
+--- @return number, number, number rightX, rightY, rightZ
+function BaseObject:GetRightVector()
+    local pitch, yaw, roll = self:GetFullRotation()
+    local m = EulerToMatrix(yaw, pitch, roll)
+    local nv = MultiplyMatrixVector3x3(m, right)
 
--- TODO: move to editor
-function BaseObject:DisableVisualNormalVector()
-    if not self.visualNormalVector then return end
-
-    for _, object in pairs(self.visualNormalVector) do
-        object:Destroy()
-    end
+    return nv[1], nv[2], nv[3]
 end
-
-function BaseObject:GetRotationFromVector(fX, fY, fZ)
-    local pitch = zo_atan2(fY, zo_sqrt(fX * fX + fZ * fZ))
-    local yaw = zo_atan2(fX, fZ)
-    return pitch, yaw
+--- Gets the up vector of the object.
+--- @return number, number, number upX, upY, upZ
+function BaseObject:GetUpVector()
+    local pitch, yaw, roll = self:GetFullRotation()
+    local m = EulerToMatrix(yaw, pitch, roll)
+    local nv = MultiplyMatrixVector3x3(m, up)
+    return nv[1], nv[2], nv[3]
+end
+--- Gets the normal vector of the object.
+--- @return number, number, number normalX, normalY, normalZ
+function BaseObject:GetNormalVector()
+    return self:GetForwardVector()
 end

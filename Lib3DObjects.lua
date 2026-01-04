@@ -6,7 +6,9 @@
 --- @field author string
 --- @field AUTOROTATE_NONE number
 --- @field AUTOROTATE_CAMERA number
---- @field AUTOROTATE_PLAYER number
+--- @field AUTOROTATE_PLAYER_HEADING number
+--- @field AUTOROTATE_PLAYER_POSITION number
+--- @field AUTOROTATE_GROUND number
 local lib = {
     name = "Lib3DObjects",
     version = "dev",
@@ -20,8 +22,9 @@ local lib = {
 
     AUTOROTATE_NONE = 1, -- manual mode
     AUTOROTATE_CAMERA = 2, -- always face camera
-    AUTOROTATE_PLAYER = 3, -- always face player heading direction
-    AUTOROTATE_GROUND = 4, -- always align to ground normal
+    AUTOROTATE_PLAYER_HEADING = 3, -- always face player heading direction
+    AUTOROTATE_PLAYER_POSITION = 4, -- always face player
+    AUTOROTATE_GROUND = 5, -- always align to ground normal
 
     PRIORITY_IGNORE = -1,
     PRIORITY_DEFAULT = 0,
