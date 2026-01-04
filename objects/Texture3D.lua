@@ -10,27 +10,15 @@ local RenderSpaceRenderer = lib.renderer.RenderSpaceRenderer
 local Texture3D = BaseObject:Subclass()
 lib.Texture3D = Texture3D
 
-function Texture3D:Initialize(texture)
+function Texture3D:Initialize(texture, x, y, z)
     BaseObject.Initialize(self, "Lib3DObjects_Texture3D", self, RenderSpaceRenderer)
     local _, pX, pY, pZ = GetUnitRawWorldPosition("player")
-    self:SetPosition(pX, pY, pZ)
+    self:SetPosition(x or pX, y or pY, z or pZ)
 
     self:SetTexture(texture)
 
     self:SetDrawDistanceMeters(75)
     self:SetAlpha(1)
-
-
-    --TEX_BLEND_MODE_ADD = 1
-    --TEX_BLEND_MODE_ALPHA = 0
-    --TEX_BLEND_MODE_COLOR_DODGE = 2
-    --self.Control:SetBlendMode(TEX_BLEND_MODE_ADD)
-    --zo_callLater(function()
-    --    self.Control:SetBlendMode(TEX_BLEND_MODE_ALPHA)
-    --end, 2000)
-    --zo_callLater(function()
-    --    self.Control:SetBlendMode(TEX_BLEND_MODE_COLOR_DODGE)
-    --end, 4000)
 end
 
 function Texture3D:Destroy()
