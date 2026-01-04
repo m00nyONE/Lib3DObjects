@@ -17,7 +17,6 @@
 
 # templates
 objects/templates.xml
-animations/animations.xml
 
 # Core Library
 Lib3DObjects.lua

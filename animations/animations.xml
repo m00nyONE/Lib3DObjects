@@ -1,9 +1,0 @@
-<GuiXml>
-    <Animations>
-        <AnimationTimeline name="Lib3DObjects_HighlightAnimation" playbackType="LOOP" loopCount="LOOP_INDEFINITELY">
-            <Animations>
-                <TextureAnimation cellsWide="64" cellsHigh="1" framerate="30" />
-            </Animations>
-        </AnimationTimeline>
-    </Animations>
-</GuiXml>
