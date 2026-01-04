@@ -40,6 +40,8 @@ end
 
 function Line:Destroy()
     self:SetTexture(nil)
+    self:SetColor(1, 1, 1, 1)
+    self:SetLineWidth(10)
     BaseObject.Destroy(self)
 end
 

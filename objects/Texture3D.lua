@@ -2,12 +2,13 @@ local lib_name = "Lib3DObjects"
 local lib = _G[lib_name]
 
 local BaseObject = lib.BaseObject
+local RenderSpaceRenderer = lib.renderer.RenderSpaceRenderer
 
 local Texture3D = BaseObject:Subclass()
 lib.Texture3D = Texture3D
 
 function Texture3D:Initialize(texture)
-    BaseObject.Initialize(self, "Lib3DObjects_Texture3D", self, lib.core.RenderSpaceRenderer)
+    BaseObject.Initialize(self, "Lib3DObjects_Texture3D", self, RenderSpaceRenderer)
     local _, pX, pY, pZ = GetUnitRawWorldPosition("player")
     self:SetPosition(pX, pY, pZ)
 

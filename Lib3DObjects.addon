@@ -43,13 +43,23 @@ objects/Text.lua
 objects/Texture.lua
 objects/Texture3D.lua
 objects/Line.lua
-objects/Marker.lua
-objects/GroundMarker.lua
-objects/GroundMarkerMechanic.lua
-objects/FloatingMarker.lua
-objects/FloatingMarkerMechanic.lua
-objects/UnitMarker.lua
-objects/UnitMarkerMechanic.lua
+# Markers
+objects/markers/Marker.lua
+objects/markers/GroundMarker.lua
+objects/markers/GroundMarkerMechanic.lua
+objects/markers/FloatingMarker.lua
+objects/markers/FloatingMarkerMechanic.lua
+objects/markers/UnitMarker.lua
+objects/markers/UnitMarkerMechanic.lua
+# Helper
+objects/helper/ReferencePoint.lua
 
-# ObjectGroups
+
+## ObjectGroups
+# Base
 objectGroups/BaseObjectGroup.lua
+# Helper
+objectGroups/helper/BoundingBox.lua
+objectGroups/helper/PositionAxis.lua
+objectGroups/helper/DirectionVectors.lua
+objectGroups/helper/NormalVector.lua
