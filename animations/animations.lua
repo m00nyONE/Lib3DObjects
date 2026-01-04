@@ -291,3 +291,31 @@ end
 --if MouseIsOver(object) then
 --    d("Mouse Over Object: " .. tostring(object.obj))
 --end
+
+
+--- set main position with animation
+--- @param x number
+--- @param y number
+--- @param z number
+--- @param durationMS number duration in milliseconds
+--- @return void
+--function BaseObject:SetPositionAnimated(x, y, z, durationMS)
+--    local beginTime = GetGameTimeMilliseconds()
+--    local endTime = beginTime + durationMS or 1000 -- default to 1 second if not provided
+--
+--    local startX = self.position.x
+--    local startY = self.position.y
+--    local startZ = self.position.z
+--
+--    local callbackFunc = function(self)
+--        local progress = (GetGameTimeMilliseconds() - beginTime) / (endTime - beginTime) -- value between 0 and 1
+--        if progress >= 1 then return true end
+--        -- Ease out: fast start, slow end (using quadratic ease out)
+--        local eased = 1 - (1 - progress) * (1 - progress)
+--        self.position.x = startX + (x - startX) * eased
+--        self.position.y = startY + (y - startY) * eased
+--        self.position.z = startZ + (z - startZ) * eased
+--    end
+--
+--    self:AddCallback(callbackFunc)
+--end
