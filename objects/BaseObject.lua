@@ -1,10 +1,8 @@
 local lib_name = "Lib3DObjects"
 local lib = _G[lib_name]
 
-local ObjectPoolManager = lib.core.ObjectPoolManager
-local WorldSpaceRenderer = lib.core.WorldSpaceRenderer
-local RenderSpaceRenderer = lib.core.RenderSpaceRenderer
-
+local WorldSpaceRenderer = lib.renderer.WorldSpaceRenderer
+local RenderSpaceRenderer = lib.renderer.RenderSpaceRenderer
 
 local BaseObject = ZO_InitializingObject:Subclass()
 lib.BaseObject = BaseObject
