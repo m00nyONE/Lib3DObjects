@@ -72,7 +72,7 @@ function BaseObjectGroup:SetHidden(hidden)
     for _, member in ipairs(self.groupMembers) do
         member:SetHidden(hidden)
     end
-    self.isHidden = not hidden
+    self.isHidden = hidden
 end
 function BaseObjectGroup:SetScale(scale)
     for _, member in ipairs(self.groupMembers) do
