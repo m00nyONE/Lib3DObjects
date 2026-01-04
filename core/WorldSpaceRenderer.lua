@@ -1,12 +1,16 @@
 local lib_name = "Lib3DObjects"
 local lib = _G[lib_name]
 
-local ObjectPoolManager = lib.core.ObjectPoolManager
+local RendererClass = lib.core.RendererClass
 
-local WorldSpaceRenderer = ZO_Object:New()
+--- World Space Renderer
+--- @class WorldSpaceRenderer : RendererClass
+local WorldSpaceRenderer = RendererClass:New()
 lib.core.WorldSpaceRenderer = WorldSpaceRenderer
 
--- this is almost an exact copy of ZO_ControlPool but adapted for 3D world space controls
+--- Factory function to create a new control.
+--- @param pool table The object pool.
+--- @return table The created control.
 function WorldSpaceRenderer.ControlFactory(pool)
     local control = ZO_ObjectPool_CreateNamedControl(pool.name, pool.templateName, pool, pool.parent)
     control:SetHidden(false)
@@ -19,10 +23,16 @@ function WorldSpaceRenderer.ControlFactory(pool)
     return control
 end
 
+--- Resets the control when released back to the pool.
+--- @param control table
+--- @return void
 function WorldSpaceRenderer.ControlReset(control)
     control:SetHidden(true)
 end
 
+--- Updates the position of the object.
+--- @param object table
+--- @return void
 function WorldSpaceRenderer.UpdatePosition(object)
     local sx, sy ,sz = GuiRender3DPositionToWorldPosition(0,0,0)
     local posX, posY, posZ = object:GetFullPosition()
@@ -32,18 +42,17 @@ function WorldSpaceRenderer.UpdatePosition(object)
     object.Control:SetTransformOffset(x, y, z)
 end
 
+--- Updates the rotation of the object.
+--- @param object table
+--- @return void
 function WorldSpaceRenderer.UpdateRotation(object)
     local pitch, yaw, roll = object:GetFullRotation()
     object.Control:SetTransformRotation(pitch, yaw, roll)
 end
 
-function WorldSpaceRenderer:InitializeObject(object)
-    object.ObjectPool = ObjectPoolManager:Get(object.templateControlName, self.ControlFactory, self.ControlReset)
-    object.Control, object.ControlKey = object.ObjectPool:AcquireObject()
-    local x, y, z = WorldPositionToGuiRender3DPosition(object.position.x, object.position.y, object.position.z)
-    object.Control:SetTransformOffset(x,y,z)
-    object.Control.obj = object
-
-    object.UpdatePosition = self.UpdatePosition
-    object.UpdateRotation = self.UpdateRotation
+--- Gets the normal vector of the object.
+--- @param object table
+--- @return number, number, number x,y,z - The normal vector of the object.
+function WorldSpaceRenderer.GetNormalVector(object)
+    return object.Control:GetNormal()
 end
