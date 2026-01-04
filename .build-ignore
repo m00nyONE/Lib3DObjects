@@ -6,3 +6,10 @@ docs-lua
 README_CONSOLE.md
 README_ESOUI.bbcode
 TODO.md
+
+animations/README.md
+core/README.md
+objectGroups/README.md
+objects/README.md
+renderer/README.md
+util/README.md

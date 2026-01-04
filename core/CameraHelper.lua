@@ -9,6 +9,9 @@ local WM = GetWindowManager()
 local cameraControlName = lib_name .. "_CameraHelperControl"
 local cameraControl = nil
 
+--- Creates a hidden 3D render space control to help with camera position calculations.
+--- This function should be called once during the library initialization.
+--- @private
 function lib.core.createCameraHelperControl()
     if cameraControl then return end -- Already created
 
