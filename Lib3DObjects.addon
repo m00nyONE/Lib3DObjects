@@ -25,11 +25,12 @@ core/CameraHelper.lua
 core/ObjectPoolManager.lua
 core/ObjectGroupManager.lua
 
-# renderers
-core/RendererClass.lua
-core/WorldSpaceRenderer.lua
-core/RenderSpaceRenderer.lua
-core/CameraHelper.lua
+# Renderers
+renderer/RendererClass.lua
+renderer/WorldSpaceRenderer.lua
+renderer/RenderSpaceRenderer.lua
+
+util/util.lua
 
 # Animations
 animations/animations.lua

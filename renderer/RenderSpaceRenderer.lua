@@ -1,12 +1,12 @@
 local lib_name = "Lib3DObjects"
 local lib = _G[lib_name]
 
-local RendererClass = lib.core.RendererClass
+local RendererClass = lib.renderer.RendererClass
 
 --- Render Space Renderer
 --- @class RenderSpaceRenderer : RendererClass
 local RenderSpaceRenderer = RendererClass:New()
-lib.core.RenderSpaceRenderer = RenderSpaceRenderer
+lib.renderer.RenderSpaceRenderer = RenderSpaceRenderer
 
 --- Factory function to create a new control.
 --- @param pool table
@@ -44,13 +44,6 @@ end
 function RenderSpaceRenderer.UpdateRotation(object)
     local pitch, yaw, roll = object:GetFullRotation()
     object.Control:Set3DRenderSpaceOrientation(pitch, yaw, roll)
-end
-
---- Gets the normal vector of the object.
---- @param object table
---- @return number normalX, number normalY, number normalZ
-function RenderSpaceRenderer.GetNormalVector(object)
-    return object.Control:Get3DRenderSpaceForward()
 end
 
 -- overrides

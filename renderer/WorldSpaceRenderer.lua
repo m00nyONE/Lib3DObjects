@@ -1,12 +1,12 @@
 local lib_name = "Lib3DObjects"
 local lib = _G[lib_name]
 
-local RendererClass = lib.core.RendererClass
+local RendererClass = lib.renderer.RendererClass
 
 --- World Space Renderer
 --- @class WorldSpaceRenderer : RendererClass
 local WorldSpaceRenderer = RendererClass:New()
-lib.core.WorldSpaceRenderer = WorldSpaceRenderer
+lib.renderer.WorldSpaceRenderer = WorldSpaceRenderer
 
 --- Factory function to create a new control.
 --- @param pool table The object pool.
@@ -50,9 +50,11 @@ function WorldSpaceRenderer.UpdateRotation(object)
     object.Control:SetTransformRotation(pitch, yaw, roll)
 end
 
---- Gets the normal vector of the object.
+-- overrides
+
+--- Gets the forward vector of the object.
 --- @param object table
---- @return number, number, number x,y,z - The normal vector of the object.
-function WorldSpaceRenderer.GetNormalVector(object)
+--- @return number, number, number x,y,z - The forward vector of the object.
+function WorldSpaceRenderer.overrides.GetForwardVector(object)
     return object.Control:GetNormal()
 end

@@ -7,7 +7,7 @@ local ObjectPoolManager = lib.core.ObjectPoolManager
 --- additional functions can be added via the .overrides table.
 --- @class RendererClass
 local RendererClass = ZO_InitializingObject:Subclass()
-lib.core.RendererClass = RendererClass
+lib.renderer.RendererClass = RendererClass
 
 --- Initializes the RendererClass instance by creating an empty .overrides table.
 --- @return void
@@ -41,12 +41,6 @@ end
 function RendererClass.UpdateRotation(object)
     error("UpdateRotation must be overridden in subclass")
 end
---- Retrieves the normal vector of the given object. MUST be overridden in subclass.
---- @param object table
---- @return number, number, number normalX, normalY, normalZ
-function RendererClass.GetNormalVector(object)
-    error("GetNormalVector must be overridden in subclass")
-end
 
 --- Initializes the renderer for the given object.
 --- @param object table
@@ -58,7 +52,6 @@ function RendererClass:InitializeObject(object)
 
     object.UpdatePosition = self.UpdatePosition
     object.UpdateRotation = self.UpdateRotation
-    object.GetNormalVector = self.GetNormalVector
 
     for funcName, func in pairs(self.overrides) do
         object[funcName] = func

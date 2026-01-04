@@ -14,9 +14,9 @@ local lib = {
     core = {
         ObjectPoolManager = {},
         ObjectGroupManager = {},
-        WorldSpaceRenderer = {},
-        RenderSpaceRenderer = {},
     },
+    renderer = {},
+    util = {},
 
     AUTOROTATE_NONE = 1, -- manual mode
     AUTOROTATE_CAMERA = 2, -- always face camera
@@ -41,6 +41,7 @@ local EM = GetEventManager()
 --[[ doc.lua end ]]
 local function initialize()
     lib.core.createCameraHelperControl()
+    --SetShouldRenderWorld(false)
 end
 
 EM:RegisterForEvent(lib_name, EVENT_ADD_ON_LOADED, function(_, name)
