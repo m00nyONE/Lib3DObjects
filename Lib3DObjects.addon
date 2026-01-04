@@ -21,8 +21,12 @@ animations/animations.xml
 
 # Core Library
 Lib3DObjects.lua
+core/CameraHelper.lua
 core/ObjectPoolManager.lua
 core/ObjectGroupManager.lua
+
+# renderers
+core/RendererClass.lua
 core/WorldSpaceRenderer.lua
 core/RenderSpaceRenderer.lua
 core/CameraHelper.lua
