@@ -21,6 +21,11 @@ function ObjectGroupManager:Remove(group)
     for i, g in ipairs(self.groups) do
         if g == group then
             table.remove(self.groups, i)
+
+            -- Stop update loop if no groups are left
+            if #self.groups == 0 then
+                self:StopUpdateLoop()
+            end
             return
         end
     end
