@@ -1,0 +1,125 @@
+[SIZE=6][B]Lib3DObjects[/B][/SIZE]
+
+A library for [B]The Elder Scrolls Online (ESO)[/B] that helps addons create and manipulate [B]3D objects[/B] in the game world.
+The goal is a small, easy to use API with lots of room for customization (appearance, transforms, behavior, etc.).
+
+[INDENT][I]Note:[/I] This library is under active development. Expect changes.[/INDENT]
+
+[SIZE=4][B]Projects using / built around Lib3DObjects[/B][/SIZE]
+
+[LIST]
+[*][URL="https://github.com/m00nyONE/Lib3DObjectsExamples"]Lib3DObjectsExamples[/URL]
+[*][URL="https://github.com/m00nyONE/Lib3DObjectsTextures"]Lib3DObjectsTextures[/URL]
+[*][URL="https://github.com/m00nyONE/GroupSupportIcons"]GroupSupportIcons[/URL]
+[*][URL="https://github.com/m00nyONE/l3do-m00MarkerPack"]L3DO-m00MarkerPack[/URL]
+[/LIST]
+
+[SIZE=4][B]Motivation[/B][/SIZE]
+
+[LIST]
+[*]There is no maintained “standard” 3D library for ESO. Many addons end up being used as de-facto libraries (e.g. OdySupportIcons), which is not ideal.
+[*]I wanted to learn more about 3D programming and the math behind it.
+[*]This should also act as documentation/reference for other developers.
+[/LIST]
+
+[SIZE=4][B]Usage of AI[/B][/SIZE]
+
+[LIST]
+[*]The code is written by hand (not AI-generated). I used AI primarily for autocompletion.
+[*]The documentation was partially generated with the help of AI (e.g. function descriptions, usage examples), based on my own explanations and code comments.
+[/LIST]
+
+[SIZE=4][B]Core Concepts[/B][/SIZE]
+
+Lib3DObjects is build to be extensible and easy to use. It provides several base classes that can be extended to create custom 3D objects with specific behaviors.
+There are a lot of premade Objects that can be used directly or extended.
+
+There are two base types that all 3D objects derive from:
+
+[LIST]
+[*][B]BaseObject[/B]: The base class for all 3D objects. It provides basic functionality such as position, rotation, scale, callbacks, and visibility.
+[*][B]BaseObjectGroup[/B]: A container for multiple BaseObjects. It allows for collective transformations and management of its child objects.
+[/LIST]
+
+With these base classes, you can create various types of 3D objects, such as:
+
+[LIST]
+[*][B]Point[/B]: A simple point in 3D space.
+[*][B]Arrow[/B]: An arrow that can be used to indicate direction in 3D space.
+[*][B]Text[/B]: 3D text that can be placed in the game world.
+[*][B]Texture[/B]: A 2D texture that can be placed in 3D space.
+[*][B]Marker[/B]: A marker that can be placed in 3D space, with options for different textures, animations, text and custom behaviours.
+[*][B]Line[/B]: A line segment between two points in 3D space.
+[/LIST]
+
+Callbacks can be registered to objects to update their properties dynamically, e.g. to make them follow a player or rotate over time. This also allows for creating reactive objects that change based on player actions or game events.
+There are several premade animation that can be used to animate objects, e.g. spinning, bouncing, pulsing, etc.
+
+Renderers are used to define how objects are drawn in the game world. Different renderers can be used for different types of objects, allowing for customization of appearance and behavior. The currently available renderers are:
+
+[LIST]
+[*][B]WorldSpaceRenderer[/B]: Renders objects in the 3D world over everything else. It allows you to see the objects through obstacles. This is the default renderer for most objects. With this you can render EVERY Control in 3D Space.
+[*][B]RenderSpaceRenderer[/B]: Renders objects in render space, allowing them to use a depth buffer and be occluded by world geometry. This is useful for creating objects that interact with the environment more realistically. This renderer ONLY supports TextureControls. That's just a limitation of the ESO API.
+[/LIST]
+
+[SIZE=4][B]Demo[/B][/SIZE]
+
+Screenshots of some things built using this library:
+
+[IMG]https://github.com/m00nyONE/Lib3DObjects/.github/assets/sphere.png[/IMG]
+[I]A 3D Sphere built out of 150 Texture circles that rotates around a Point in 3D space[/I]
+
+[IMG]https://github.com/m00nyONE/Lib3DObjects/.github/assets/reactiveGroundMarkers.png[/IMG]
+[I]Rotating Ground markers that change their size when close to the player[/I]
+
+[IMG]https://github.com/m00nyONE/Lib3DObjects/.github/assets/reactiveFloatingMarkers.png[/IMG]
+[I]Reactive Floating Markers that change their size and display text when hovering the crosshair over them[/I]
+
+[IMG]https://github.com/m00nyONE/Lib3DObjects/.github/assets/linesOnFloor.png[/IMG]
+[I]Lines drawn on the floor to indicate a zone[/I]
+
+[IMG]https://github.com/m00nyONE/Lib3DObjects/.github/assets/unitMarkerFacingPlayer.png[/IMG]
+[I]An array of UnitMarkers around the player which always face in the players heading direction[/I]
+
+[IMG]https://github.com/m00nyONE/Lib3DObjects/.github/assets/iconCloud.png[/IMG]
+[I]A cloud of 2000 icons from LibCustomIcons[/I]
+
+[IMG]https://github.com/m00nyONE/Lib3DObjects/.github/assets/rotatingCube.png[/IMG]
+[I]A rotating cube made out of 12 arrows[/I]
+
+A Demo Video will come soon... TM
+
+[SIZE=4][B]Usage[/B][/SIZE]
+
+There are a LOT more examples in my [URL="https://github.com/m00nyONE/Lib3DObjectsExamples"]Lib3DObjectsExamples[/URL] addon.
+
+Minimal example: [B]create a marker that follows you[/B].
+
+[CODE]
+local addon_name = "l3doExampleAddon"
+local l3do = Lib3DObjects
+local EM = GetEventManager()
+
+local function initialize()
+    local texture = "/esoui/art/icons/sunspiresenche.dds" -- replace with your texture
+    local unitTag = "player" -- or "group1", "group2" etc.
+    local myMarker = l3do.UnitMarker:New(texture, unitTag)
+end
+
+EM:RegisterForEvent(addon_name, EVENT_ADD_ON_LOADED, function(_, name)
+    if name ~= addon_name then return end
+
+    EM:UnregisterForEvent(addon_name, EVENT_ADD_ON_LOADED)
+    initialize()
+end)
+[/CODE]
+
+[SIZE=4][B]Contributing[/B][/SIZE]
+
+Feel free to open issues and create Pull Requests.
+
+[LIST]
+[*][URL="https://github.com/m00nyONE/Lib3DObjects/issues"]Issues[/URL]
+[*][URL="https://github.com/m00nyONE/Lib3DObjects/pulls"]Pull Requests[/URL]
+[/LIST]
+

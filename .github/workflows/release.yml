@@ -1,0 +1,107 @@
+name: Addon Release
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  create-addon-zip:
+    uses: ./.github/workflows/_create-zip.yml
+  create-release-notes:
+    uses: ./.github/workflows/_create-release-notes.yml
+  generate-docs:
+    if: github.repository_owner == 'm00nyONE'
+    uses: ./.github/workflows/_generate-docs.yml
+    permissions:
+      contents: write
+
+  create-github-release:
+    name: "Create Github Release"
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs:
+      - create-addon-zip
+      - create-release-notes
+    steps:
+      - name: Download ZIP Multi
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.create-addon-zip.outputs.zip_multi }}
+      - name: Download ZIP PC
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.create-addon-zip.outputs.zip_pc }}
+      - name: Download ZIP Console
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.create-addon-zip.outputs.zip_console }}
+      - name: Download Release Notes
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.create-release-notes.outputs.release_notes }}
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          name: "${{ needs.create-addon-zip.outputs.addon_version }}"
+          commit: ${{ github.ref }}
+          tag: "${{ needs.create-addon-zip.outputs.addon_version }}"
+          artifacts: "${{ needs.create-addon-zip.outputs.zip_multi }},${{ needs.create-addon-zip.outputs.zip_pc }},${{ needs.create-addon-zip.outputs.zip_console }}"
+          artifactContentType: application/zip
+          bodyFile: ${{ needs.create-release-notes.outputs.release_notes }}
+          allowUpdates: true
+          makeLatest: true
+
+#  create-esoui-release:
+#    name: "ESOUI Release"
+#    runs-on: ubuntu-latest
+#    if: github.repository_owner == 'm00nyONE'
+#    needs:
+#      - create-addon-zip
+#    steps:
+#      - name: Check out repository
+#        uses: actions/checkout@v4
+#
+#      - name: Download ZIP PC
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: ${{ needs.create-addon-zip.outputs.zip_pc }}
+#
+#      - name: Upload to ESOUI
+#        uses: m00nyONE/esoui-upload@main
+#        with:
+#          api_key: ${{ secrets.ESOUI_API_KEY }}
+#          addon_id: '2311'
+#          version: ${{ needs.create-addon-zip.outputs.addon_version }}
+#          zip_file: ${{ needs.create-addon-zip.outputs.zip_pc }}
+#          changelog_file: 'CHANGELOG.md'
+#          description_file: 'README_ESOUI.bbcode'
+#
+#  create-bnet-release:
+#    name: "BNET Release"
+#    runs-on: ubuntu-latest
+#    if: github.repository_owner == 'm00nyONE'
+#    needs:
+#      - create-addon-zip
+#      - create-release-notes
+#    steps:
+#      - name: Download ZIP Console
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: ${{ needs.create-addon-zip.outputs.zip_console }}
+#      - name: Download Release Notes
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: ${{ needs.create-release-notes.outputs.release_notes }}
+#
+#      - name: Upload to BNET
+#        uses: m00nyONE/bnet-upload@main
+#        with:
+#          BNET_USERNAME: ${{ secrets.BNET_USERNAME }}
+#          BNET_PASSWORD: ${{ secrets.BNET_PASSWORD }}
+#          addon_id: "fef0db78-bc0e-4c89-b77e-f03d570d10a9"
+#          version: ${{ needs.create-addon-zip.outputs.addon_version }}
+#          zip_file: ${{ needs.create-addon-zip.outputs.zip_console }}
+#          release_notes_file: ${{ needs.create-release-notes.outputs.release_notes }}
+#          concurrency: '5'
