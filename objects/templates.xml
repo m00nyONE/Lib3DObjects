@@ -1,3 +1,6 @@
+<!--SPDX-FileCopyrightText: 2025 m00nyONE-->
+<!--SPDX-License-Identifier: Artistic-2.0-->
+
 <GuiXml>
     <Controls>
         <Label name="Lib3DObjects_Text" virtual="true" space="WORLD" horizontalAlignment="CENTER" verticalAlignment="CENTER" font="$(MEDIUM_FONT)|$(KB_22)|thick-outline" text="">
