@@ -22,8 +22,8 @@ end
 
 function Texture:Destroy()
     self:SetTexture(nil)
-    self:SetHeight(100)
-    self:SetWidth(100)
+    self:SetDimensions(100, 100)
+    self:SetColor(1, 1, 1, 1)
     self:SetScale(1)
 
     BaseObject.Destroy(self)
