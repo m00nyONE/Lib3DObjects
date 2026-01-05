@@ -98,29 +98,29 @@ end
 function UnitMarker._hideConditionCallback(object, distanceToPlayer, distanceToCamera)
     if not AreUnitsEqual(object.unitTag, "player") then
         if not IsUnitOnline(object.unitTag) then
-            d("UnitMarker: Hiding marker for offline unit "..tostring(object.unitTag))
+            --d("UnitMarker: Hiding marker for offline unit "..tostring(object.unitTag))
             object:SetHidden(true)
             return
         end
         if not IsGroupMemberInSameInstanceAsPlayer(object.unitTag) then
-            d("UnitMarker: Hiding marker for unit "..tostring(object.unitTag).." in different instance")
+            --d("UnitMarker: Hiding marker for unit "..tostring(object.unitTag).." in different instance")
             object:SetHidden(true)
             return
         end
         if not IsGroupMemberInSameWorldAsPlayer(object.unitTag) then
-            d("UnitMarker: Hiding marker for unit "..tostring(object.unitTag).." in different world")
+            --d("UnitMarker: Hiding marker for unit "..tostring(object.unitTag).." in different world")
             object:SetHidden(true)
             return
         end
         if IsGroupMemberInRemoteRegion(object.unitTag) then
-            d("UnitMarker: Hiding marker for unit "..tostring(object.unitTag).." in remote region")
+            --d("UnitMarker: Hiding marker for unit "..tostring(object.unitTag).." in remote region")
             object:SetHidden(true)
             return
         end
     end
 
     if not object:_hasHighestPriorityOnUnit() then
-        d("UnitMarker: Hiding marker for unit "..tostring(object.unitTag).." due to lower priority")
+        --d("UnitMarker: Hiding marker for unit "..tostring(object.unitTag).." due to lower priority")
         object:SetHidden(true)
         return
     end
