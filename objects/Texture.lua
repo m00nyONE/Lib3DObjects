@@ -13,11 +13,13 @@ lib.Texture = Texture
 
 function Texture:Initialize(texture, x, y, z, useDepthBuffer)
     local renderer = WorldSpaceRenderer
+    local template = "Lib3DObjects_Texture_World"
     if useDepthBuffer == true then
         renderer = RenderSpaceRenderer
+        template = "Lib3DObjects_Texture_Render"
     end
 
-    BaseObject.Initialize(self, "Lib3DObjects_Texture", self, renderer)
+    BaseObject.Initialize(self, template, self, renderer)
     local _, pX, pY, pZ = GetUnitRawWorldPosition("player")
     self:SetPosition(x or pX, y or pY, z or pZ)
 
