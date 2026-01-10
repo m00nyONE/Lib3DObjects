@@ -420,17 +420,32 @@ end
 function BaseObject:SetPositionOffsetX(offsetX)
     self.position.offsetX = offsetX or self.position.offsetX
 end
+--- get position offset X
+--- @return number offsetX
+function BaseObject:GetPositionOffsetX()
+    return self.position.offsetX
+end
 --- set position offset Y
 --- @param offsetY number
 --- @return void
 function BaseObject:SetPositionOffsetY(offsetY)
     self.position.offsetY = offsetY or self.position.offsetY
 end
+--- get position offset Y
+--- @return number offsetY
+function BaseObject:GetPositionOffsetY()
+    return self.position.offsetY
+end
 --- set position offset Z
 --- @param offsetZ number
 --- @return void
 function BaseObject:SetPositionOffsetZ(offsetZ)
     self.position.offsetZ = offsetZ or self.position.offsetZ
+end
+--- get position offset Z
+--- @return number offsetZ
+function BaseObject:GetPositionOffsetZ()
+    return self.position.offsetZ
 end
 --- get animation position offsets
 --- @return number, number, number offsetX, offsetY, offsetZ
@@ -447,17 +462,32 @@ function BaseObject:SetAnimationOffset(offsetX, offsetY, offsetZ)
     self.position.animationOffsetY = offsetY or self.position.animationOffsetY
     self.position.animationOffsetZ = offsetZ or self.position.animationOffsetZ
 end
+--- get animation position offset X
+--- @return number offsetX
+function BaseObject:GetAnimationOffsetX()
+    return self.position.animationOffsetX
+end
 --- set animation position offset X
 --- @param offsetX number
 --- @return void
 function BaseObject:SetAnimationOffsetX(offsetX)
     self.position.animationOffsetX = offsetX
 end
+--- get animation position offset Y
+--- @return number offsetY
+function BaseObject:GetAnimationOffsetY()
+    return self.position.animationOffsetY
+end
 --- set animation position offset Y
 --- @param offsetY number
 --- @return void
 function BaseObject:SetAnimationOffsetY(offsetY)
     self.position.animationOffsetY = offsetY
+end
+--- get animation position offset Z
+--- @return number offsetZ
+function BaseObject:GetAnimationOffsetZ()
+    return self.position.animationOffsetZ
 end
 --- set animation position offset Z
 --- @param offsetZ number
