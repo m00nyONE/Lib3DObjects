@@ -44,7 +44,6 @@ function WorldSpaceRenderer.UpdatePosition(object)
     local z = (posZ - sz) / 100
     object.Control:SetTransformOffset(x, y, z)
 end
-
 --- Updates the rotation of the object.
 --- @param object table
 --- @return void
@@ -52,22 +51,43 @@ function WorldSpaceRenderer.UpdateRotation(object)
     local pitch, yaw, roll = object:GetFullRotation()
     object.Control:SetTransformRotation(pitch, yaw, roll)
 end
-
+--- Sets the height of the object.
+--- @param object table
+--- @param height number
+--- @return void
 function WorldSpaceRenderer.SetHeight(object, height)
     object.Control:SetHeight(height)
 end
+--- Gets the height of the object.
+--- @param object table
+--- @return number height
 function WorldSpaceRenderer.GetHeight(object)
     return object.Control:GetHeight()
 end
+--- Sets the width of the object.
+--- @param object table
+--- @param width number
+--- @return void
 function WorldSpaceRenderer.SetWidth(object, width)
     object.Control:SetWidth(width)
 end
+--- Gets the width of the object.
+--- @param object table
+--- @return number width
 function WorldSpaceRenderer.GetWidth(object)
     return object.Control:GetWidth()
 end
+--- Sets the dimensions of the object.
+--- @param object table
+--- @param width number
+--- @param height number
+--- @return void
 function WorldSpaceRenderer.SetDimensions(object, width, height)
     object.Control:SetDimensions(width, height)
 end
+--- Gets the dimensions of the object.
+--- @param object table
+--- @return number, number width, height
 function WorldSpaceRenderer.GetDimensions(object)
     return object.Control:GetDimensions()
 end
