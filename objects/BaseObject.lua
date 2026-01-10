@@ -695,6 +695,30 @@ end
 function BaseObject:GetLivetimeMS()
     return GetGameTimeMilliseconds() - self.creationTimestamp
 end
+
+--- set fade out distance far in centimeters
+--- @param distance number
+--- @return void
+function BaseObject:SetFadeOutDistanceFar(distance)
+    self.fadeOutDistanceFar = distance
+end
+--- get fade out distance far in centimeters
+--- @return number distance
+function BaseObject:GetFadeOutDistanceFar()
+    return self.fadeOutDistanceFar
+end
+--- set fade out distance near in centimeters
+--- @param distance number
+--- @return void
+function BaseObject:SetFadeOutDistanceNear(distance)
+    self.fadeOutDistanceNear = distance
+end
+--- get fade out distance near in centimeters
+--- @return number distance
+function BaseObject:GetFadeOutDistanceNear()
+    return self.fadeOutDistanceNear
+end
+
 --- rotate object around a point by given pitch, yaw, roll offsets (WARNING: this is costly in terms of performance!)
 --- @param x number pivot x
 --- @param y number pivot y
