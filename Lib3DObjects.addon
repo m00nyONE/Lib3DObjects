@@ -41,6 +41,7 @@ objects/Point.lua
 objects/Text.lua
 objects/Texture.lua
 objects/Line.lua
+objects/Beam.lua
 # Markers
 objects/markers/Marker.lua
 objects/markers/GroundMarker.lua

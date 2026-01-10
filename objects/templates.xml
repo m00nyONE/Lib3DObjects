@@ -66,15 +66,22 @@
     </Controls>
 
     <Controls>
-        <Texture name="Lib3DObjects_Line" virtual="true"  space="WORLD">
+        <Texture name="Lib3DObjects_Line" virtual="true" space="WORLD">
             <Dimensions x="10" y="10" />
             <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER"/>
         </Texture>
     </Controls>
 
+    <!-- THIS IS SO ANNOYING!!! WE NEED 2 DIFFERENT TEMPLATES BECAUSE ESO SIMPLY REFUSES TO DRAW IT WHEN IT'S CHILDREN ARE IN DIFFERENT SPACES -->
     <Controls>
-        <Texture name="Lib3DObjects_Beam" virtual="true" textureFile="Lib3DObjects/textures/beam.dds">
-            <Dimensions x="1" y="1" />
+        <Texture name="Lib3DObjects_Beam_World" virtual="true" textureFile="Lib3DObjects/textures/beam.dds">
+            <Dimensions x="100" y="100" />
+            <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER"/>
+        </Texture>
+    </Controls>
+    <Controls>
+        <Texture name="Lib3DObjects_Beam_Render" virtual="true" textureFile="Lib3DObjects/textures/beam.dds">
+            <Dimensions x="100" y="100" />
             <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER"/>
         </Texture>
     </Controls>
