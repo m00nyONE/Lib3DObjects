@@ -45,6 +45,25 @@ function RendererClass.UpdateRotation(object)
     error("UpdateRotation must be overridden in subclass")
 end
 
+function RendererClass.SetHeight(object, height)
+    error("SetHeight must be overridden in subclass")
+end
+function RendererClass.GetHeight(object)
+    error("GetHeight must be overridden in subclass")
+end
+function RendererClass.SetWidth(object, width)
+    error("SetWidth must be overridden in subclass")
+end
+function RendererClass.GetWidth(object)
+    error("GetWidth must be overridden in subclass")
+end
+function RendererClass.SetDimensions(object, width, height)
+    error("SetDimensions must be overridden in subclass")
+end
+function RendererClass.GetDimensions(object)
+    error("GetDimensions must be overridden in subclass")
+end
+
 --- Initializes the renderer for the given object.
 --- @param object table
 --- @return void
@@ -55,6 +74,13 @@ function RendererClass:InitializeObject(object)
 
     object.UpdatePosition = self.UpdatePosition
     object.UpdateRotation = self.UpdateRotation
+
+    object.GetWidth = self.GetWidth
+    object.SetWidth = self.SetWidth
+    object.GetHeight = self.GetHeight
+    object.SetHeight = self.SetHeight
+    object.GetDimensions = self.GetDimensions
+    object.SetDimensions = self.SetDimensions
 
     for funcName, func in pairs(self.overrides) do
         object[funcName] = func

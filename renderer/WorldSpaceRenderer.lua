@@ -53,6 +53,25 @@ function WorldSpaceRenderer.UpdateRotation(object)
     object.Control:SetTransformRotation(pitch, yaw, roll)
 end
 
+function WorldSpaceRenderer.SetHeight(object, height)
+    object.Control:SetHeight(height)
+end
+function WorldSpaceRenderer.GetHeight(object)
+    return object.Control:GetHeight()
+end
+function WorldSpaceRenderer.SetWidth(object, width)
+    object.Control:SetWidth(width)
+end
+function WorldSpaceRenderer.GetWidth(object)
+    return object.Control:GetWidth()
+end
+function WorldSpaceRenderer.SetDimensions(object, width, height)
+    object.Control:SetDimensions(width, height)
+end
+function WorldSpaceRenderer.GetDimensions(object)
+    return object.Control:GetDimensions()
+end
+
 -- overrides
 
 --- Gets the forward vector of the object.

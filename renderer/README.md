@@ -71,6 +71,26 @@ Output:
 
 - Must set the *control orientation* so the object is rendered with the correct rotation.
 
+### 5) Size / dimensions API
+
+Lib3DObjects objects call into the renderer for **width/height** changes, because different rendering techniques use different APIs (UI dimensions vs. render space local dimensions).
+
+A renderer **must** implement:
+
+- `SetWidth(object, width)`
+- `GetWidth(object) -> width`
+- `SetHeight(object, height)`
+- `GetHeight(object) -> height`
+- `SetDimensions(object, width, height)`
+- `GetDimensions(object) -> width, height`
+
+Notes / conventions:
+
+- For objects, width/height are typically treated as **centimeters** (ESO world units).
+- A renderer is free to convert those into whatever the underlying API needs.
+  - Example: `RenderSpaceRenderer` uses `control:Set3DLocalDimensions(width/100, height/100)` internally.
+  - Example: `WorldSpaceRenderer` directly uses `control:SetWidth(width)` / `SetHeight(height)`.
+
 ## How the renderer gets "bound" to an object
 
 `RendererClass:InitializeObject(object)` does the wiring:
@@ -80,10 +100,11 @@ Output:
 - sets the methods on the object:
   - `object.UpdatePosition = self.UpdatePosition`
   - `object.UpdateRotation = self.UpdateRotation`
+  - `object.GetWidth/SetWidth/GetHeight/SetHeight/GetDimensions/SetDimensions = self.<...>`
 - installs overrides (see below),
 - calls `object:UpdatePosition()` once initially.
 
-Important: In the current implementation, `UpdatePosition`/`UpdateRotation` are **functions on the renderer "singleton"** that get copied onto the object as methods.
+Important: In the current implementation, renderer functions are **functions on the renderer "singleton"** that get copied onto the object as methods.
 Therefore the expected signature is `UpdatePosition(object)` (not `UpdatePosition(self)`).
 
 ## The override system (`RendererClass.overrides`)
@@ -134,6 +155,9 @@ Because overrides are assigned directly to `object[funcName]`:
    - `MyRenderer.ControlReset(control)`
    - `MyRenderer.UpdatePosition(object)`
    - `MyRenderer.UpdateRotation(object)`
+   - `MyRenderer.SetWidth(object, width)` / `MyRenderer.GetWidth(object)`
+   - `MyRenderer.SetHeight(object, height)` / `MyRenderer.GetHeight(object)`
+   - `MyRenderer.SetDimensions(object, width, height)` / `MyRenderer.GetDimensions(object)`
 
 3) Optional: populate `MyRenderer.overrides`.
 4) Pass the renderer when creating an object:
@@ -162,16 +186,40 @@ end
 
 function MyRenderer.UpdatePosition(_)
     -- values: object:GetFullPosition()
-    -- Convert and apply to control
+    -- Convert and apply to the underlying API
 end
 
 function MyRenderer.UpdateRotation(_)
     -- values: object:GetFullRotation()
-    -- Apply to control
+    -- Apply to the underlying API
+end
+
+function MyRenderer.SetWidth(_, _)
+    -- Apply width to the underlying API
+end
+
+function MyRenderer.GetWidth(_)
+    -- return width
+end
+
+function MyRenderer.SetHeight(_, _)
+    -- Apply height to the underlying API
+end
+
+function MyRenderer.GetHeight(_)
+    -- return height
+end
+
+function MyRenderer.SetDimensions(_, _, _)
+    -- Apply combined dimensions to the underlying API
+end
+
+function MyRenderer.GetDimensions(_)
+    -- return width, height
 end
 
 -- optional renderer-specific methods (added to the object during InitializeObject)
-MyRenderer.overrides.MyFeature = function()
+MyRenderer.overrides.MyFeature = function(_, ...)
     -- ...
 end
 ```

@@ -48,6 +48,50 @@ function RenderSpaceRenderer.UpdateRotation(object)
     local pitch, yaw, roll = object:GetFullRotation()
     object.Control:Set3DRenderSpaceOrientation(pitch, yaw, roll)
 end
+--- Sets the height of the object.
+--- @param object table
+--- @param height number
+--- @return void
+function RenderSpaceRenderer.SetHeight(object, height)
+    local w, _ = object.Control:Get3DLocalDimensions()
+    object.Control:Set3DLocalDimensions(w, height / 100)
+end
+--- Gets the height of the object.
+--- @param object table
+--- @return number height
+function RenderSpaceRenderer.GetHeight(object)
+    local _, h = object.Control:Get3DLocalDimensions()
+    return h * 100
+end
+--- Sets the width of the object.
+--- @param object table
+--- @param width number
+--- @return void
+function RenderSpaceRenderer.SetWidth(object, width)
+    local _, h = object.Control:Get3DLocalDimensions()
+    object.Control:Set3DLocalDimensions(width / 100, h)
+end
+--- Gets the width of the object.
+--- @param object table
+--- @return number width
+function RenderSpaceRenderer.GetWidth(object)
+    local w, _ = object.Control:Get3DLocalDimensions()
+    return w * 100
+end
+--- Sets the dimensions of the object.
+--- @param object table
+--- @param width number
+--- @param height number
+--- @return void
+function RenderSpaceRenderer.SetDimensions(object, width, height)
+    object.Control:Set3DLocalDimensions(width / 100, height / 100)
+end
+--- Gets the dimensions of the object.
+--- @param object table
+--- @return number, number width, height
+function RenderSpaceRenderer.GetDimensions(object)
+    return object.Control:Get3DLocalDimensions() * 100
+end
 
 -- overrides
 

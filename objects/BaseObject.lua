@@ -129,6 +129,36 @@ end
 function BaseObject:UpdateRotation()
     error("UpdateRotation needs to be implemented by a RendererClass")
 end
+--- set the height of the object - to be implemented by RendererClass
+--- @param height number
+function BaseObject:SetHeight(height)
+    error("SetHeight needs to be implemented by a RendererClass")
+end
+--- get the height of the object - to be implemented by RendererClass
+--- @return number height
+function BaseObject:GetHeight()
+    error("GetHeight needs to be implemented by a RendererClass")
+end
+--- set the width of the object - to be implemented by RendererClass
+--- @param width number
+function BaseObject:SetWidth(width)
+    error("SetWidth needs to be implemented by a RendererClass")
+end
+--- get the width of the object - to be implemented by RendererClass
+--- @return number width
+function BaseObject:GetWidth()
+    error("GetWidth needs to be implemented by a RendererClass")
+end
+--- set the dimensions of the object - to be implemented by RendererClass
+--- @param width number
+function BaseObject:SetDimensions(width, height)
+    error("SetDimensions needs to be implemented by a RendererClass")
+end
+--- get the dimensions of the object - to be implemented by RendererClass
+--- @return number width, number height
+function BaseObject:GetDimensions()
+    error("GetDimensions needs to be implemented by a RendererClass")
+end
 --- update function called every frame by the ObjectPoolManager
 --- @return boolean isRendered
 function BaseObject:Update()
