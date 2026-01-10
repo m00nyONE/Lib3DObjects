@@ -685,12 +685,6 @@ function BaseObject:SetAnimationRotationOffsetRoll(offsetRoll)
     self.rotation.animationOffsetRoll = offsetRoll or self.rotation.animationOffsetRoll
 end
 
---- get normal vector (facing direction)
---- @return number normalX, number normalY, number normalZ
-function BaseObject:GetNormalVector()
-    error("GetNormalVector needs to be implemented by a RendererClass")
-end
-
 --- get creation timestamp in milliseconds
 --- @return number creationTimestamp
 function BaseObject:GetCreationTimestamp()
