@@ -29,7 +29,7 @@ end
 --- @param control table
 --- @return void
 function RenderSpaceRenderer.ControlReset(control)
-    control:Destroy3DRenderSpace()
+    --control:Destroy3DRenderSpace() -- keep the render space for reuse - once it get's destroyed on an control, it can not be created again
     control:SetHidden(true)
 end
 
