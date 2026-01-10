@@ -40,7 +40,6 @@ objects/BaseObject.lua
 objects/Point.lua
 objects/Text.lua
 objects/Texture.lua
-objects/Texture3D.lua
 objects/Line.lua
 # Markers
 objects/markers/Marker.lua

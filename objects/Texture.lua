@@ -5,12 +5,19 @@ local lib_name = "Lib3DObjects"
 local lib = _G[lib_name]
 
 local BaseObject = lib.BaseObject
+local WorldSpaceRenderer = lib.renderer.WorldSpaceRenderer
+local RenderSpaceRenderer = lib.renderer.RenderSpaceRenderer
 
 local Texture = BaseObject:Subclass()
 lib.Texture = Texture
 
-function Texture:Initialize(texture, x, y, z)
-    BaseObject.Initialize(self, "Lib3DObjects_Texture", self)
+function Texture:Initialize(texture, x, y, z, useDepthBuffer)
+    local renderer = WorldSpaceRenderer
+    if useDepthBuffer == true then
+        renderer = RenderSpaceRenderer
+    end
+
+    BaseObject.Initialize(self, "Lib3DObjects_Texture", self, renderer)
     local _, pX, pY, pZ = GetUnitRawWorldPosition("player")
     self:SetPosition(x or pX, y or pY, z or pZ)
 
@@ -34,24 +41,6 @@ function Texture:SetColor(r, g, b, a)
 end
 function Texture:GetColor()
     return self.Control:GetColor()
-end
-function Texture:SetDimensions(width, height)
-    self.Control:SetDimensions(width, height)
-end
-function Texture:GetDimensions()
-    return self.Control:GetDimensions()
-end
-function Texture:SetHeight(height)
-    self.Control:SetHeight(height)
-end
-function Texture:GetHeight()
-    return self.Control:GetHeight()
-end
-function Texture:SetWidth(width)
-    self.Control:SetWidth(width)
-end
-function Texture:GetWidth()
-    return self.Control:GetWidth()
 end
 function Texture:SetTexture(texturePath, left, right, top, bottom)
     self.Control:SetTexture(texturePath)
