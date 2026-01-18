@@ -36,7 +36,7 @@ function Point:Destroy()
     self.PointControl:SetHidden(false)
     self:SetTexture(nil)
     self.LabelControl:SetHidden(false)
-    self:SetLabel("")
+    self:SetLabel("P")
     self.PositionControl:SetHidden(false)
 
     BaseObject.Destroy(self)
