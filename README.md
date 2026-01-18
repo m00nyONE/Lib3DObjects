@@ -46,6 +46,15 @@ Renderers are used to define how objects are drawn in the game world. Different 
 - **WorldSpaceRenderer**: Renders objects in the 3D world over everything else. It allows you to see the objects through obstacles. This is the default renderer for most objects. With this you can render EVERY Control in 3D Space.
 - **RenderSpaceRenderer**: Renders objects in render space, allowing them to use a depth buffer and be occluded by world geometry. This is useful for creating objects that interact with the environment more realistically. This renderer ONLY supports TextureControls. That's just a limitation of the ESO API.
 
+## Documentation
+The full indepth documentation to every aspect of the library and its components can be found in the corresponding folders:
+- [Core](./core/README.md)
+- [Utils](./util/README.md)
+- [Renderers](./renderer/README.md)
+- [Objects](./objects/README.md)
+- [ObjectGroups](./objectGroups/README.md)
+- [Animations](./animations/README.md)
+
 ## Demo
 
 Screenshots of some things built using this library:
