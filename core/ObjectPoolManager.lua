@@ -71,7 +71,7 @@ function ObjectPoolManager:StartUpdateLoop()
     local function _updateControlsWrapper()
         self:UpdateControls()
     end
-    EM:RegisterForUpdate(lib_name .. "_Update", 0 , _updateControlsWrapper)
+    EM:RegisterForUpdate(lib_name .. "_Update", lib.core.sw.updateInterval , _updateControlsWrapper)
     self.isUpdating = true
 end
 

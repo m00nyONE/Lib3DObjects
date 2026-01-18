@@ -39,7 +39,7 @@ end
 function ObjectGroupManager:StartUpdateLoop()
     if self.isUpdating then return end
 
-    EM:RegisterForUpdate(lib_name .. "_UpdateGroupObjects", 0 , function()
+    EM:RegisterForUpdate(lib_name .. "_UpdateGroupObjects", lib.core.sw.updateInterval , function()
         self:UpdateGroups()
     end)
     self.isUpdating = true

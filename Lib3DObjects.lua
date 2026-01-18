@@ -42,9 +42,18 @@ _G[lib_name] = lib
 
 local EM = GetEventManager()
 
+local svName = "Lib3DObjectsSavedVars"
+local svVersion = 1
+local svDefault = {
+    debug = false,
+    updateInterval = 0, -- every frame
+}
+
 
 --[[ doc.lua end ]]
 local function initialize()
+    lib.core.sw = ZO_SavedVars:NewAccountWide(svName, svVersion, nil, svDefault)
+
     lib.core.createCameraHelperControl()
     --SetShouldRenderWorld(false)
 end
