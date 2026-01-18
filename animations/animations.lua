@@ -97,7 +97,7 @@ function animations.CreateSingleBounceAnimation(durationMS, frequency, amplitude
             local progress = getProgress(beginTime, endTime) -- value between 0 and 1
             if progress >= 1 then return true end
             local elapsedTime = progress * (durationMS / 1000) -- convert to seconds
-            local offsetY = amplitude * math.abs(math.sin(2 * ZO_PI * frequency * elapsedTime))
+            local offsetY = amplitude * zo_abs(zo_sin(2 * ZO_PI * frequency * elapsedTime))
             self.position.animationOffsetY = offsetY
         end
 
@@ -118,7 +118,7 @@ function animations.CreateContinuesBounceAnimation(conditionFunc, frequency, amp
 
             local currentTime = GetGameTimeMilliseconds()
             local elapsedTime = (currentTime - beginTime) / 1000 -- convert to seconds
-            local offsetY = amplitude * math.abs(math.sin(2 * ZO_PI * frequency * elapsedTime))
+            local offsetY = amplitude * zo_abs(zo_sin(2 * ZO_PI * frequency * elapsedTime))
             self.position.animationOffsetY = offsetY
 
         end
@@ -163,7 +163,7 @@ function animations.CreateContinuesPulseAnimation(conditionFunc, minAlpha, maxAl
             local currentTime = GetGameTimeMilliseconds()
             local elapsedTime = (currentTime - beginTime) / 1000 -- convert to seconds
             local alphaRange = maxAlpha - minAlpha
-            self.Control:SetAlpha(minAlpha + (alphaRange / 2) * (1 + math.sin(2 * ZO_PI * elapsedTime)))
+            self.Control:SetAlpha(minAlpha + (alphaRange / 2) * (1 + zo_sin(2 * ZO_PI * elapsedTime)))
         end
 
         return callbackFunc
