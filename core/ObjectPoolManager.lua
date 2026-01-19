@@ -7,6 +7,8 @@ local lib = _G[lib_name]
 local WM = GetWindowManager()
 local EM = GetEventManager()
 
+local async = LibAsync
+
 --- @class ObjectPoolManager : ZO_Object
 --- @field pools table<string, ZO_ObjectPool>
 --- @field metrics table
@@ -106,12 +108,9 @@ local diffTime = 0
 local updatedControls = 0
 local renderedControls = 0
 
---- Updates all active controls in all pools.
---- @return void
-function ObjectPoolManager:UpdateControls()
-    beginTime = GetGameTimeMilliseconds()
+function ObjectPoolManager:_UpdateControls() end
+function ObjectPoolManager:_UpdateControlsSync()
     updatedControls = 0
-    renderedControls = 0
     for _, pool in pairs(self.pools) do
         for _, object in pairs(pool:GetActiveObjects()) do -- we can also use the pool:ActiveObjectIterator(filterFunctions) here if we need it later
             local isRendered = self:UpdateObject(object.obj)
@@ -119,6 +118,25 @@ function ObjectPoolManager:UpdateControls()
             updatedControls = updatedControls + 1
         end
     end
+end
+function ObjectPoolManager:_UpdateControlsAsync()
+    for _, pool in pairs(self.pools) do
+        local task = async:Create(pool.name)
+        task:For(ipairs(pool:GetActiveObjects())):Do(function(_, object)
+            local isRendered = self:UpdateObject(object.obj)
+            if isRendered then renderedControls = renderedControls + 1 end
+            updatedControls = updatedControls + 1
+        end)
+    end
+end
+
+--- Updates all active controls in all pools.
+--- @return void
+function ObjectPoolManager:UpdateControls()
+    beginTime = GetGameTimeMilliseconds()
+    updatedControls = 0
+    renderedControls = 0
+    ObjectPoolManager:_UpdateControls()
     endTime = GetGameTimeMilliseconds()
     diffTime = endTime - beginTime
 
@@ -134,4 +152,10 @@ function ObjectPoolManager:UpdateControls()
     metrics.peakVisibleObjects = zo_max(metrics.peakVisibleObjects, renderedControls)
     --d(string.format("ObjectPools Updated: %d/%d controls in average: %.2f ms over %d updates", renderedControls, updatedControls, updateTime / updateCount, updateCount))
     --d(string.format("ObjectPools Updated: %d/%d controls in: %.2f ms", renderedControls, updatedControls, (endTime - beginTime)))
+end
+
+if async then
+    ObjectPoolManager._UpdateControls = ObjectPoolManager._UpdateControlsAsync
+else
+    ObjectPoolManager._UpdateControls = ObjectPoolManager._UpdateControlsSync
 end

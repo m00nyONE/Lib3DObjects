@@ -8,6 +8,7 @@
 ## APIVersion: 101047 101048
 ## AddOnVersion: 99999999
 ## SavedVariables: Lib3DObjectsSavedVars
+## OptionalDependsOn: LibAsync>=30101
 ## IsLibrary: true
 
 ; This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates.
