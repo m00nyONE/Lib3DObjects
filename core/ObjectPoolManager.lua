@@ -169,41 +169,23 @@ local function _UpdateControlsAsync(self)
     end
     return _updatedControls, _renderedControls
 end
-local function _coUpdatePool(self, pool)
-    local _updatedControls = 0
-    local _renderedControls = 0
-    for _, object in ipairs(pool:GetActiveObjects()) do -- we can also use the pool:ActiveObjectIterator(filterFunctions) here if we need it later
-        local isRendered = self:UpdateObject(object.obj)
-        if isRendered then _renderedControls = _renderedControls + 1 end
-        _updatedControls = _updatedControls + 1
-    end
-    coroutine.yield(_updatedControls, _renderedControls)
-end
-local function _UpdateControlsCoroutine(self)
-    local _updatedControls = 0
-    local _renderedControls = 0
-    for _, pool in pairs(self.pools) do
-        local objectUpdater = coroutine.create(_coUpdatePool)
-        local success, updatedControls, renderedControls = coroutine.resume(objectUpdater, self, pool)
-        if success then
-            _renderedControls = _renderedControls + (renderedControls or 0)
-            _updatedControls = _updatedControls + (updatedControls or 0)
-        else
-            d("error in coroutine for pool " .. pool.name .. ": " .. tostring(updatedControls)) -- _updatedControls contains the error message here
-        end
-    end
-    return _updatedControls, _renderedControls
-end
 
+--- Sets the update mode for the ObjectPoolManager.
+--- @param mode number The update mode to set (UPDATE_MODE_SYNC or UPDATE_MODE_ASYNC).
+--- @return void
 function ObjectPoolManager:SetUpdateMode(mode)
     if mode == lib.UPDATE_MODE_SYNC then
         self.UpdateControls = _UpdateControlsSync
     elseif mode == lib.UPDATE_MODE_ASYNC then
+        if not async then
+            df("[%s] Warning: LibAsync not found, cannot set update mode to ASYNC. Defaulting to SYNC mode.", lib_name)
+            lib.core.sw.updateMode = lib.UPDATE_MODE_SYNC
+            self.UpdateControls = _UpdateControlsSync
+            return
+        end
         self.UpdateControls = _UpdateControlsAsync
-    elseif mode == lib.UPDATE_MODE_COROUTINE then
-        self.UpdateControls = _UpdateControlsCoroutine
     else
-        d(string.format("[%s] Warning: Unknown update mode %s, defaulting to SYNC mode.", lib_name, tostring(mode)))
+        df("[%s] Warning: Unknown update mode %s, defaulting to SYNC mode.", lib_name, tostring(mode))
         self.UpdateControls = _UpdateControlsSync
     end
 end

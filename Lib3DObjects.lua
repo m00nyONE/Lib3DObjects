@@ -30,7 +30,6 @@ local lib = {
 
     UPDATE_MODE_SYNC = 1,
     UPDATE_MODE_ASYNC = 2,
-    UPDATE_MODE_COROUTINE = 3,
 
     PRIORITY_IGNORE = -1,
     PRIORITY_DEFAULT = 0,
@@ -74,8 +73,16 @@ end)
 
 SLASH_COMMANDS["/l3do"] = function(str)
     if str == "version" then
-        d(string.format("[%s] by %s, version %s", lib_name, lib_author, lib_version))
+        df("[%s] by %s, version %s", lib_name, lib_author, lib_version)
+    elseif str == "updateMode sync" then
+        lib.core.sw.updateMode = lib.UPDATE_MODE_SYNC
+        lib.core.ObjectPoolManager:SetUpdateMode(lib.core.sw.updateMode)
+        df("[%s] update mode set to SYNC", lib_name)
+    elseif str == "updateMode async" then
+        lib.core.sw.updateMode = lib.UPDATE_MODE_ASYNC
+        lib.core.ObjectPoolManager:SetUpdateMode(lib.core.sw.updateMode)
+        df("[%s] update mode set to ASYNC", lib_name)
     elseif str then
-        d(string.format("Unknown command: %s", str))
+        df("[%s] Unknown command: %s", lib_name, str)
     end
 end
