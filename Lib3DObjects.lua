@@ -54,7 +54,7 @@ local svDefault = {
 local function initialize()
     lib.core.sw = ZO_SavedVars:NewAccountWide(svName, svVersion, nil, svDefault)
 
-    lib.core.createCameraHelperControl()
+    lib.core.InitializeCameraHelper()
     --SetShouldRenderWorld(false)
 end
 
