@@ -11,7 +11,7 @@ lib.core.ObjectGroupManager = ObjectGroupManager
 
 ObjectGroupManager.groups = {}
 function ObjectGroupManager:UpdateGroups()
-    for _, group in pairs(self.groups) do
+    for _, group in ipairs(self.groups) do
         group:Update()
     end
 end
@@ -39,9 +39,11 @@ end
 function ObjectGroupManager:StartUpdateLoop()
     if self.isUpdating then return end
 
-    EM:RegisterForUpdate(lib_name .. "_UpdateGroupObjects", lib.core.sw.updateInterval , function()
+    local function _updateGroupWrapper()
         self:UpdateGroups()
-    end)
+    end
+
+    EM:RegisterForUpdate(lib_name .. "_UpdateGroupObjects", lib.core.sw.updateInterval , _updateGroupWrapper)
     self.isUpdating = true
 end
 

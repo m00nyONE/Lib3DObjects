@@ -15,6 +15,8 @@ local async = LibAsync
 --- @field isUpdating boolean
 local ObjectPoolManager = ZO_Object:New()
 lib.core.ObjectPoolManager = ObjectPoolManager
+ObjectPoolManager.activeObjects = {}
+ObjectPoolManager.activeObjectsCount = 0
 ObjectPoolManager.pools = {}
 ObjectPoolManager.metrics = {
     totalCreatedObjects = 0,
@@ -51,7 +53,7 @@ function ObjectPoolManager:Get(templateName, ControlFactory, ControlReset)
     pool.parent = window
     pool.name = window:GetName()
     pool.templateName = templateName
-    pool.AcquireObject = function (selfself, objectKey)
+    pool.AcquireObject = function(selfself, objectKey)
         local control, key = ZO_ObjectPool.AcquireObject(selfself, objectKey)
         control:SetHidden(false)
         self:StartUpdateLoop()
@@ -65,14 +67,50 @@ function ObjectPoolManager:Get(templateName, ControlFactory, ControlReset)
     return pool
 end
 
+--- Begins the metrics timing for an update cycle.
+--- @return number beginTime The start time in milliseconds.
+function ObjectPoolManager:BeginMetrics()
+    return GetGameTimeMilliseconds()
+end
+--- Ends the metrics timing for an update cycle and updates the metrics.
+--- @param beginTime number The start time in milliseconds.
+--- @param updatedControls number The number of updated controls.
+--- @param renderedControls number The number of rendered controls.
+--- @return void
+function ObjectPoolManager:EndMetrics(beginTime, updatedControls, renderedControls)
+    local endTime = GetGameTimeMilliseconds()
+    local diffTime = endTime - beginTime
+
+    local metrics = self.metrics
+    metrics.totalUpdates = metrics.totalUpdates + 1
+    metrics.totalUpdateTime = metrics.totalUpdateTime + diffTime
+    metrics.averageUpdateTime = metrics.totalUpdateTime / metrics.totalUpdates
+    metrics.currentUpdateTime = diffTime
+    metrics.peakUpdateTime = zo_max(metrics.peakUpdateTime, diffTime)
+    metrics.currentRegisteredObjects = updatedControls
+    metrics.peakRegisteredObjects = zo_max(metrics.peakRegisteredObjects, updatedControls)
+    metrics.currentVisibleObjects = renderedControls
+    metrics.peakVisibleObjects = zo_max(metrics.peakVisibleObjects, renderedControls)
+    --d(string.format("ObjectPools Updated: %d/%d controls in average: %.2f ms over %d updates", renderedControls, updatedControls, updateTime / updateCount, updateCount))
+    --d(string.format("ObjectPools Updated: %d/%d controls in: %.2f ms", renderedControls, updatedControls, (endTime - beginTime)))
+end
+
+function ObjectPoolManager:Noop()
+    -- no operation
+end
+
 --- Starts the update loop for updating active controls.
 --- @return void
 function ObjectPoolManager:StartUpdateLoop()
     if self.isUpdating then return end
 
+    --- Wrapper function to include metrics around the update call
     local function _updateControlsWrapper()
-        self:UpdateControls()
+        local beginTime = self:BeginMetrics()
+        local updatedControls, renderedControls = self:UpdateControls()
+        self:EndMetrics(beginTime, updatedControls, renderedControls)
     end
+
     EM:RegisterForUpdate(lib_name .. "_Update", lib.core.sw.updateInterval , _updateControlsWrapper)
     self.isUpdating = true
 end
@@ -102,60 +140,70 @@ function ObjectPoolManager:UpdateObject(object)
     return isRendered
 end
 
-local beginTime = 0
-local endTime = 0
-local diffTime = 0
-local updatedControls = 0
-local renderedControls = 0
-
-function ObjectPoolManager:_UpdateControls() end
-function ObjectPoolManager:_UpdateControlsSync()
-    updatedControls = 0
+--- Internal function to update all active controls in all pools.
+--- @return void
+local function _UpdateControlsSync(self)
+    local _updatedControls = 0
+    local _renderedControls = 0
     for _, pool in pairs(self.pools) do
-        for _, object in pairs(pool:GetActiveObjects()) do -- we can also use the pool:ActiveObjectIterator(filterFunctions) here if we need it later
+        for _, object in ipairs(pool:GetActiveObjects()) do -- we can also use the pool:ActiveObjectIterator(filterFunctions) here if we need it later
             local isRendered = self:UpdateObject(object.obj)
-            if isRendered then renderedControls = renderedControls + 1 end
-            updatedControls = updatedControls + 1
+            if isRendered then _renderedControls = _renderedControls + 1 end
+            _updatedControls = _updatedControls + 1
         end
     end
+    return _updatedControls, _renderedControls
 end
-function ObjectPoolManager:_UpdateControlsAsync()
+--- Internal function to update all active controls in all pools. (uses LibAsync)
+--- @return void
+local function _UpdateControlsAsync(self)
+    local _updatedControls = 0
+    local _renderedControls = 0
     for _, pool in pairs(self.pools) do
         local task = async:Create(pool.name)
         task:For(ipairs(pool:GetActiveObjects())):Do(function(_, object)
             local isRendered = self:UpdateObject(object.obj)
-            if isRendered then renderedControls = renderedControls + 1 end
-            updatedControls = updatedControls + 1
+            if isRendered then _renderedControls = _renderedControls + 1 end
+            _updatedControls = _updatedControls + 1
         end)
     end
+    return _updatedControls, _renderedControls
+end
+local function _coUpdatePool(self, pool)
+    local _updatedControls = 0
+    local _renderedControls = 0
+    for _, object in ipairs(pool:GetActiveObjects()) do -- we can also use the pool:ActiveObjectIterator(filterFunctions) here if we need it later
+        local isRendered = self:UpdateObject(object.obj)
+        if isRendered then _renderedControls = _renderedControls + 1 end
+        _updatedControls = _updatedControls + 1
+    end
+    coroutine.yield(_updatedControls, _renderedControls)
+end
+local function _UpdateControlsCoroutine(self)
+    local _updatedControls = 0
+    local _renderedControls = 0
+    for _, pool in pairs(self.pools) do
+        local objectUpdater = coroutine.create(_coUpdatePool)
+        local success, updatedControls, renderedControls = coroutine.resume(objectUpdater, self, pool)
+        if success then
+            _renderedControls = _renderedControls + (renderedControls or 0)
+            _updatedControls = _updatedControls + (updatedControls or 0)
+        else
+            d("error in coroutine for pool " .. pool.name .. ": " .. tostring(updatedControls)) -- _updatedControls contains the error message here
+        end
+    end
+    return _updatedControls, _renderedControls
 end
 
---- Updates all active controls in all pools.
---- @return void
-function ObjectPoolManager:UpdateControls()
-    beginTime = GetGameTimeMilliseconds()
-    updatedControls = 0
-    renderedControls = 0
-    ObjectPoolManager:_UpdateControls()
-    endTime = GetGameTimeMilliseconds()
-    diffTime = endTime - beginTime
-
-    local metrics = self.metrics
-    metrics.totalUpdates = metrics.totalUpdates + 1
-    metrics.totalUpdateTime = metrics.totalUpdateTime + diffTime
-    metrics.averageUpdateTime = metrics.totalUpdateTime / metrics.totalUpdates
-    metrics.currentUpdateTime = diffTime
-    metrics.peakUpdateTime = zo_max(metrics.peakUpdateTime, diffTime)
-    metrics.currentRegisteredObjects = updatedControls
-    metrics.peakRegisteredObjects = zo_max(metrics.peakRegisteredObjects, updatedControls)
-    metrics.currentVisibleObjects = renderedControls
-    metrics.peakVisibleObjects = zo_max(metrics.peakVisibleObjects, renderedControls)
-    --d(string.format("ObjectPools Updated: %d/%d controls in average: %.2f ms over %d updates", renderedControls, updatedControls, updateTime / updateCount, updateCount))
-    --d(string.format("ObjectPools Updated: %d/%d controls in: %.2f ms", renderedControls, updatedControls, (endTime - beginTime)))
-end
-
-if async then
-    ObjectPoolManager._UpdateControls = ObjectPoolManager._UpdateControlsAsync
-else
-    ObjectPoolManager._UpdateControls = ObjectPoolManager._UpdateControlsSync
+function ObjectPoolManager:SetUpdateMode(mode)
+    if mode == lib.UPDATE_MODE_SYNC then
+        self.UpdateControls = _UpdateControlsSync
+    elseif mode == lib.UPDATE_MODE_ASYNC then
+        self.UpdateControls = _UpdateControlsAsync
+    elseif mode == lib.UPDATE_MODE_COROUTINE then
+        self.UpdateControls = _UpdateControlsCoroutine
+    else
+        d(string.format("[%s] Warning: Unknown update mode %s, defaulting to SYNC mode.", lib_name, tostring(mode)))
+        self.UpdateControls = _UpdateControlsSync
+    end
 end

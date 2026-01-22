@@ -28,6 +28,10 @@ local lib = {
     AUTOROTATE_PLAYER_POSITION = 4, -- always face player
     AUTOROTATE_GROUND = 5, -- always align to ground normal
 
+    UPDATE_MODE_SYNC = 1,
+    UPDATE_MODE_ASYNC = 2,
+    UPDATE_MODE_COROUTINE = 3,
+
     PRIORITY_IGNORE = -1,
     PRIORITY_DEFAULT = 0,
     PRIORITY_LOW = 1,
@@ -47,6 +51,7 @@ local svVersion = 1
 local svDefault = {
     debug = false,
     updateInterval = 0, -- every frame
+    updateMode = lib.UPDATE_MODE_SYNC,
 }
 
 
@@ -56,6 +61,8 @@ local function initialize()
 
     lib.core.createCameraHelperControl()
     --SetShouldRenderWorld(false)
+
+    lib.core.ObjectPoolManager:SetUpdateMode(lib.core.sw.updateMode)
 end
 
 EM:RegisterForEvent(lib_name, EVENT_ADD_ON_LOADED, function(_, name)
@@ -67,10 +74,7 @@ end)
 
 SLASH_COMMANDS["/l3do"] = function(str)
     if str == "version" then
-        d(string.format("%s by %s, version %s", lib_name, lib_author, lib_version))
-    elseif str == "axis" then
-        local _ = lib.examples.createAxis(500)
-        d("Created axis markers.")
+        d(string.format("[%s] by %s, version %s", lib_name, lib_author, lib_version))
     elseif str then
         d(string.format("Unknown command: %s", str))
     end
