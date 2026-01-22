@@ -601,27 +601,27 @@ end
 --- @param roll number
 --- @return void
 function BaseObject:SetRotation(pitch, yaw, roll)
-    self.rotation.pitch = pitch
-    self.rotation.yaw = yaw
-    self.rotation.roll = roll
+    self.rotation.pitch = pitch or self.rotation.pitch
+    self.rotation.yaw = yaw or self.rotation.yaw
+    self.rotation.roll = roll or self.rotation.roll
 end
 --- set rotation pitch
 --- @param pitch number
 --- @return void
 function BaseObject:SetRotationPitch(pitch)
-    self.rotation.pitch = pitch
+    self.rotation.pitch = pitch or self.rotation.pitch
 end
 --- set rotation yaw
 --- @param yaw number
 --- @return void
 function BaseObject:SetRotationYaw(yaw)
-    self.rotation.yaw = yaw
+    self.rotation.yaw = yaw or self.rotation.yaw
 end
 --- set rotation roll
 --- @param roll number
 --- @return void
 function BaseObject:SetRotationRoll(roll)
-    self.rotation.roll = roll
+    self.rotation.roll = roll or self.rotation.roll
 end
 --- rotate object by given pitch, yaw, roll offsets. The offsets are added to the current rotation and are absolute in the end. This does not rotate the object locally.
 --- @param offsetPitch number
@@ -629,27 +629,27 @@ end
 --- @param offsetRoll number
 --- @return void
 function BaseObject:Rotate(offsetPitch, offsetYaw, offsetRoll)
-    self.rotation.pitch = (self.rotation.pitch or 0) + offsetPitch
-    self.rotation.yaw = (self.rotation.yaw or 0) + offsetYaw
-    self.rotation.roll = (self.rotation.roll or 0) + offsetRoll
+    self.rotation.pitch = self.rotation.pitch + (offsetPitch or 0)
+    self.rotation.yaw = self.rotation.yaw + (offsetYaw or 0)
+    self.rotation.roll = self.rotation.roll + (offsetRoll or 0)
 end
 --- rotate object by given pitch offsets. The offsets are added to the current rotation and are absolute in the end. This does not rotate the object locally.
 --- @param offsetPitch number
 --- @return void
 function BaseObject:RotatePitch(offsetPitch)
-    self.rotation.pitch = (self.rotation.pitch or 0) + offsetPitch
+    self.rotation.pitch = self.rotation.pitch + (offsetPitch or 0)
 end
 --- rotate object by given yaw offsets. The offsets are added to the current rotation and are absolute in the end. This does not rotate the object locally.
 --- @param offsetYaw number
 --- @return void
 function BaseObject:RotateYaw(offsetYaw)
-    self.rotation.yaw = (self.rotation.yaw or 0) + offsetYaw
+    self.rotation.yaw = self.rotation.yaw + (offsetYaw or 0)
 end
 --- rotate object by given roll offsets. The offsets are added to the current rotation and are absolute in the end. This does not rotate the object locally.
 --- @param offsetRoll number
 --- @return void
 function BaseObject:RotateRoll(offsetRoll)
-    self.rotation.roll = (self.rotation.roll or 0) + offsetRoll
+    self.rotation.roll = self.rotation.roll + (offsetRoll or 0)
 end
 --- get animation rotation offsets
 --- @return number, number, number offsetPitch, offsetYaw, offsetRoll
@@ -766,7 +766,7 @@ end
 --- @return void
 function BaseObject:RotateToPlayerHeading()
     local _, _, heading = GetMapPlayerPosition("player")
-    self.rotation.yaw = heading + ZO_PI
+    self:SetRotationYaw(heading + ZO_PI)
 end
 --- rotate to face the player
 --- @return void
@@ -777,15 +777,15 @@ function BaseObject:RotateToPlayerPosition()
     local dirY = playerY - objY
     local dirZ = playerZ - objZ
 
-    self.rotation.yaw = zo_atan2(dirX, dirZ) + ZO_PI
-    self.rotation.pitch = zo_atan2(dirY, zo_sqrt(dirX * dirX + dirZ * dirZ))
+    self:SetRotationPitch(zo_atan2(dirY, zo_sqrt(dirX * dirX + dirZ * dirZ)))
+    self:SetRotationYaw(zo_atan2(dirX, dirZ) + ZO_PI)
 end
 
 --- rotate object to be aligned with ground normal (facing up from the ground)
 --- @return void
 function BaseObject:RotateToGroundNormal()
-    local cP, cY, cR = self:GetRotation()
-    self:SetRotation(-ZO_PI/2, cY, cR)
+    local _, yaw, roll = self:GetRotation()
+    self:SetRotation(-ZO_PI/2, yaw, roll)
 end
 --- set auto rotation mode
 --- @param mode number one of AUTOROTATE_NONE, AUTOROTATE_CAMERA, AUTOROTATE_PLAYER_HEADING, AUTOROTATE_PLAYER_POSITION, AUTOROTATE_GROUND
