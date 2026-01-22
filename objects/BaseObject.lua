@@ -757,10 +757,7 @@ end
 --- rotate object to face camera
 --- @return void
 function BaseObject:RotateToCamera()
-    local fX, fY, fZ = GetCameraForward(SPACE_WORLD)
-    self.rotation.pitch = zo_atan2(fY, zo_sqrt(fX * fX + fZ * fZ))
-    self.rotation.yaw = zo_atan2(fX, fZ) - ZO_PI
-    self.rotation.roll = 0
+    self:SetRotation(lib.GetCameraWorldRotation())
 end
 --- rotate object to face player heading
 --- @return void
@@ -806,16 +803,14 @@ end
 function BaseObject:MoveToCursor()
     -- this code is inspired by M0RMarkers
     local camX, camY, camZ = lib.GetCameraWorldPosition()
-    local fwX, fwY, fwZ = GetCameraForward(SPACE_WORLD)
-    local yaw = zo_atan2(fwX, fwZ) - ZO_PI
-    local pitch = zo_atan2(fwY, zo_sqrt(fwX * fwX + fwZ * fwZ))
+    local camPitch, camYaw, _ = lib.GetCameraWorldRotation()
 
-    if pitch > zo_rad(-2) then return end -- just not too far off the screen
+    if camPitch > zo_rad(-2) then return end -- just not too far off the screen
 
     local _, _, y, _ = GetUnitRawWorldPosition("player") --feet position
-    local r = (camY-y)/(zo_tan(pitch))
-    local x = r*zo_sin(yaw) + camX
-    local z = r*zo_cos(yaw) + camZ
+    local r = (camY-y)/(zo_tan(camPitch))
+    local x = r*zo_sin(camYaw) + camX
+    local z = r*zo_cos(camYaw) + camZ
 
     self:SetPosition(x, y, z)
 end
