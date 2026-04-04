@@ -68,8 +68,6 @@ Objects managed by the pool are expected to expose:
   - `object._updatePreHooks = { function(object) ... end, ... }`
   - `object._updatePostHooks = { function(object) ... end, ... }`
 
-> Note: the pool iterates `object.obj` (not the pool entry itself). This is because every Control has the Instance of the BaseObject or any of its Subclasses attached to it when it gets created.
-
 ---
 ## `ObjectGroupManager` (group update loop)
 

@@ -7,8 +7,6 @@ local lib = _G[lib_name]
 local WM = GetWindowManager()
 local EM = GetEventManager()
 
-local async = LibAsync
-
 --- @class ObjectPoolManager : ZO_Object
 --- @field pools table<string, ZO_ObjectPool>
 --- @field metrics table
@@ -95,33 +93,15 @@ function ObjectPoolManager:EndMetrics(beginTime, updatedControls, renderedContro
     --d(string.format("ObjectPools Updated: %d/%d controls in: %.2f ms", renderedControls, updatedControls, (endTime - beginTime)))
 end
 
+--- No operation function for hooks that don't need to do anything.
+--- @return void
 function ObjectPoolManager:Noop()
     -- no operation
 end
 
---- Starts the update loop for updating active controls.
---- @return void
-function ObjectPoolManager:StartUpdateLoop()
-    if self.isUpdating then return end
-
-    --- Wrapper function to include metrics around the update call
-    local function _updateControlsWrapper()
-        local beginTime = self:BeginMetrics()
-        local updatedControls, renderedControls = self:UpdateControls()
-        self:EndMetrics(beginTime, updatedControls, renderedControls)
-    end
-
-    EM:RegisterForUpdate(lib_name .. "_Update", lib.core.sw.updateInterval , _updateControlsWrapper)
-    self.isUpdating = true
-end
-
---- Stops the update loop for updating active controls.
---- @return void
-function ObjectPoolManager:StopUpdateLoop()
-    EM:UnregisterForUpdate(lib_name .. "_Update")
-    self.isUpdating = false
-end
-
+--- Updates a single object, including pre and post update hooks.
+--- @param object table The object to update.
+--- @return boolean isRendered Whether the object was rendered during this update.
 function ObjectPoolManager:UpdateObject(object)
     if object._updatePreHooks then
         for _, hook in ipairs(object._updatePreHooks) do
@@ -140,52 +120,53 @@ function ObjectPoolManager:UpdateObject(object)
     return isRendered
 end
 
---- Internal function to update all active controls in all pools.
+--- Updates all active controls in all pools.
 --- @return void
-local function _UpdateControlsSync(self)
-    local _updatedControls = 0
-    local _renderedControls = 0
+function ObjectPoolManager:UpdateControls()
+    local beginTime = self:BeginMetrics()
+
+    local updatedControls = 0
+    local renderedControls = 0
     for _, pool in pairs(self.pools) do
         for _, object in ipairs(pool:GetActiveObjects()) do -- we can also use the pool:ActiveObjectIterator(filterFunctions) here if we need it later
             local isRendered = self:UpdateObject(object.obj)
-            if isRendered then _renderedControls = _renderedControls + 1 end
-            _updatedControls = _updatedControls + 1
+            if isRendered then renderedControls = renderedControls + 1 end
+            updatedControls = updatedControls + 1
         end
     end
-    return _updatedControls, _renderedControls
-end
---- Internal function to update all active controls in all pools. (uses LibAsync)
---- @return void
-local function _UpdateControlsAsync(self)
-    local _updatedControls = 0
-    local _renderedControls = 0
-    for _, pool in pairs(self.pools) do
-        local task = async:Create(pool.name)
-        task:For(ipairs(pool:GetActiveObjects())):Do(function(_, object)
-            local isRendered = self:UpdateObject(object.obj)
-            if isRendered then _renderedControls = _renderedControls + 1 end
-            _updatedControls = _updatedControls + 1
-        end)
-    end
-    return _updatedControls, _renderedControls
+
+    self:EndMetrics(beginTime, updatedControls, renderedControls)
 end
 
---- Sets the update mode for the ObjectPoolManager.
---- @param mode number The update mode to set (UPDATE_MODE_SYNC or UPDATE_MODE_ASYNC).
+--- Starts the update loop for updating active controls.
 --- @return void
-function ObjectPoolManager:SetUpdateMode(mode)
-    if mode == lib.UPDATE_MODE_SYNC then
-        self.UpdateControls = _UpdateControlsSync
-    elseif mode == lib.UPDATE_MODE_ASYNC then
-        if not async then
-            df("[%s] Warning: LibAsync not found, cannot set update mode to ASYNC. Defaulting to SYNC mode.", lib_name)
-            lib.core.sw.updateMode = lib.UPDATE_MODE_SYNC
-            self.UpdateControls = _UpdateControlsSync
-            return
-        end
-        self.UpdateControls = _UpdateControlsAsync
-    else
-        df("[%s] Warning: Unknown update mode %s, defaulting to SYNC mode.", lib_name, tostring(mode))
-        self.UpdateControls = _UpdateControlsSync
+function ObjectPoolManager:StartUpdateLoop()
+    if self.isUpdating then return end
+
+    --- Wrapper function to include metrics around the update call
+    local function _updateControlsWrapper()
+        self:UpdateControls()
+    end
+
+    EM:RegisterForUpdate(lib_name .. "_Update", lib.core.sw.updateInterval , _updateControlsWrapper)
+    self.isUpdating = true
+end
+
+--- Stops the update loop for updating active controls.
+--- @return void
+function ObjectPoolManager:StopUpdateLoop()
+    EM:UnregisterForUpdate(lib_name .. "_Update")
+    self.isUpdating = false
+end
+
+--- Sets the update interval for the update loop.
+--- @param interval number The update interval in milliseconds.
+--- @return void
+function ObjectPoolManager:SetUpdateInterval(interval)
+    lib.core.sw.updateInterval = interval
+
+    if self.isUpdating then
+        self:StopUpdateLoop()
+        self:StartUpdateLoop()
     end
 end

@@ -28,9 +28,6 @@ local lib = {
     AUTOROTATE_PLAYER_POSITION = 4, -- always face player
     AUTOROTATE_GROUND = 5, -- always align to ground normal
 
-    UPDATE_MODE_SYNC = 1,
-    UPDATE_MODE_ASYNC = 2,
-
     PRIORITY_IGNORE = -1,
     PRIORITY_DEFAULT = 0,
     PRIORITY_LOW = 1,
@@ -50,7 +47,6 @@ local svVersion = 1
 local svDefault = {
     debug = false,
     updateInterval = 0, -- every frame
-    updateMode = lib.UPDATE_MODE_SYNC,
 }
 
 
@@ -60,8 +56,6 @@ local function initialize()
 
     lib.core.InitializeCameraHelper()
     --SetShouldRenderWorld(false)
-
-    lib.core.ObjectPoolManager:SetUpdateMode(lib.core.sw.updateMode)
 end
 
 EM:RegisterForEvent(lib_name, EVENT_ADD_ON_LOADED, function(_, name)
@@ -74,14 +68,6 @@ end)
 SLASH_COMMANDS["/l3do"] = function(str)
     if str == "version" then
         df("[%s] by %s, version %s", lib_name, lib_author, lib_version)
-    elseif str == "updateMode sync" then
-        lib.core.sw.updateMode = lib.UPDATE_MODE_SYNC
-        lib.core.ObjectPoolManager:SetUpdateMode(lib.core.sw.updateMode)
-        df("[%s] update mode set to SYNC", lib_name)
-    elseif str == "updateMode async" then
-        lib.core.sw.updateMode = lib.UPDATE_MODE_ASYNC
-        lib.core.ObjectPoolManager:SetUpdateMode(lib.core.sw.updateMode)
-        df("[%s] update mode set to ASYNC", lib_name)
     elseif str then
         df("[%s] Unknown command: %s", lib_name, str)
     end
